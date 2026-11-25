@@ -1,0 +1,353 @@
+{
+  "contract": "fact",
+  "valid": [
+    {
+      "schema_version": "1.0",
+      "fact_id": "F-S7-RANGE-CLTC",
+      "project_id": "auto-demo",
+      "entity_id": "product-lanxu-s7",
+      "attribute": "续航里程",
+      "value": 620,
+      "unit": "km",
+      "conditions": {
+        "test_cycle": "CLTC",
+        "trim": "长续航版"
+      },
+      "zone": "fact",
+      "source_tier": "C",
+      "content_use": "specification",
+      "is_core": true,
+      "evidence": {
+        "evidence_id": "EV-0001",
+        "source_name": "澜序汽车官网参数页（虚构）",
+        "source_ref": "https://lanxu-auto.example/s7/spec",
+        "collected_at": "2026-09-20T02:00:00Z",
+        "last_verified_at": "2026-10-01T02:00:00Z",
+        "reviewer": "事实库审核人（虚构）"
+      },
+      "valid_from": "2026-09-01",
+      "valid_until": null,
+      "status": "active",
+      "version": 1,
+      "synthetic": true
+    },
+    {
+      "schema_version": "1.0",
+      "fact_id": "M-S7-SLOGAN",
+      "project_id": "auto-demo",
+      "entity_id": "product-lanxu-s7",
+      "attribute": "宣传语",
+      "value": "安静得像一片湖",
+      "unit": null,
+      "conditions": {},
+      "zone": "marketing",
+      "source_tier": null,
+      "content_use": "promotion",
+      "is_core": false,
+      "evidence": null,
+      "valid_from": "2026-09-01",
+      "valid_until": "2026-12-31",
+      "status": "active",
+      "version": 2
+    }
+  ],
+  "invalid": [
+    {
+      "why": "事实区条目没有来源等级",
+      "expect": {
+        "path": "/source_tier",
+        "keyword": "enum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "fact_id": "F-S7-RANGE-CLTC",
+        "project_id": "auto-demo",
+        "entity_id": "product-lanxu-s7",
+        "attribute": "续航里程",
+        "value": 620,
+        "unit": "km",
+        "conditions": {
+          "test_cycle": "CLTC",
+          "trim": "长续航版"
+        },
+        "zone": "fact",
+        "source_tier": null,
+        "content_use": "specification",
+        "is_core": true,
+        "evidence": {
+          "evidence_id": "EV-0001",
+          "source_name": "澜序汽车官网参数页（虚构）",
+          "source_ref": "https://lanxu-auto.example/s7/spec",
+          "collected_at": "2026-09-20T02:00:00Z",
+          "last_verified_at": "2026-10-01T02:00:00Z",
+          "reviewer": "事实库审核人（虚构）"
+        },
+        "valid_from": "2026-09-01",
+        "valid_until": null,
+        "status": "active",
+        "version": 1,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "来源等级超出 A～D",
+      "expect": {
+        "path": "/source_tier",
+        "keyword": "enum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "fact_id": "F-S7-RANGE-CLTC",
+        "project_id": "auto-demo",
+        "entity_id": "product-lanxu-s7",
+        "attribute": "续航里程",
+        "value": 620,
+        "unit": "km",
+        "conditions": {
+          "test_cycle": "CLTC",
+          "trim": "长续航版"
+        },
+        "zone": "fact",
+        "source_tier": "S",
+        "content_use": "specification",
+        "is_core": true,
+        "evidence": {
+          "evidence_id": "EV-0001",
+          "source_name": "澜序汽车官网参数页（虚构）",
+          "source_ref": "https://lanxu-auto.example/s7/spec",
+          "collected_at": "2026-09-20T02:00:00Z",
+          "last_verified_at": "2026-10-01T02:00:00Z",
+          "reviewer": "事实库审核人（虚构）"
+        },
+        "valid_from": "2026-09-01",
+        "valid_until": null,
+        "status": "active",
+        "version": 1,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "分区取值非法",
+      "expect": {
+        "path": "/zone",
+        "keyword": "enum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "fact_id": "F-S7-RANGE-CLTC",
+        "project_id": "auto-demo",
+        "entity_id": "product-lanxu-s7",
+        "attribute": "续航里程",
+        "value": 620,
+        "unit": "km",
+        "conditions": {
+          "test_cycle": "CLTC",
+          "trim": "长续航版"
+        },
+        "zone": "rumor",
+        "source_tier": "C",
+        "content_use": "specification",
+        "is_core": true,
+        "evidence": {
+          "evidence_id": "EV-0001",
+          "source_name": "澜序汽车官网参数页（虚构）",
+          "source_ref": "https://lanxu-auto.example/s7/spec",
+          "collected_at": "2026-09-20T02:00:00Z",
+          "last_verified_at": "2026-10-01T02:00:00Z",
+          "reviewer": "事实库审核人（虚构）"
+        },
+        "valid_from": "2026-09-01",
+        "valid_until": null,
+        "status": "active",
+        "version": 1,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "生效日期不是日期格式",
+      "expect": {
+        "path": "/valid_from",
+        "keyword": "pattern"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "fact_id": "F-S7-RANGE-CLTC",
+        "project_id": "auto-demo",
+        "entity_id": "product-lanxu-s7",
+        "attribute": "续航里程",
+        "value": 620,
+        "unit": "km",
+        "conditions": {
+          "test_cycle": "CLTC",
+          "trim": "长续航版"
+        },
+        "zone": "fact",
+        "source_tier": "C",
+        "content_use": "specification",
+        "is_core": true,
+        "evidence": {
+          "evidence_id": "EV-0001",
+          "source_name": "澜序汽车官网参数页（虚构）",
+          "source_ref": "https://lanxu-auto.example/s7/spec",
+          "collected_at": "2026-09-20T02:00:00Z",
+          "last_verified_at": "2026-10-01T02:00:00Z",
+          "reviewer": "事实库审核人（虚构）"
+        },
+        "valid_from": "2026/09/01",
+        "valid_until": null,
+        "status": "active",
+        "version": 1,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "证据缺少审核责任人",
+      "expect": {
+        "path": "/evidence",
+        "keyword": "anyOf"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "fact_id": "F-S7-RANGE-CLTC",
+        "project_id": "auto-demo",
+        "entity_id": "product-lanxu-s7",
+        "attribute": "续航里程",
+        "value": 620,
+        "unit": "km",
+        "conditions": {
+          "test_cycle": "CLTC",
+          "trim": "长续航版"
+        },
+        "zone": "fact",
+        "source_tier": "C",
+        "content_use": "specification",
+        "is_core": true,
+        "evidence": {
+          "evidence_id": "EV-0001",
+          "source_name": "澜序汽车官网参数页（虚构）",
+          "source_ref": "https://lanxu-auto.example/s7/spec",
+          "collected_at": "2026-09-20T02:00:00Z",
+          "last_verified_at": "2026-10-01T02:00:00Z"
+        },
+        "valid_from": "2026-09-01",
+        "valid_until": null,
+        "status": "active",
+        "version": 1,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "版本号为 0",
+      "expect": {
+        "path": "/version",
+        "keyword": "minimum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "fact_id": "F-S7-RANGE-CLTC",
+        "project_id": "auto-demo",
+        "entity_id": "product-lanxu-s7",
+        "attribute": "续航里程",
+        "value": 620,
+        "unit": "km",
+        "conditions": {
+          "test_cycle": "CLTC",
+          "trim": "长续航版"
+        },
+        "zone": "fact",
+        "source_tier": "C",
+        "content_use": "specification",
+        "is_core": true,
+        "evidence": {
+          "evidence_id": "EV-0001",
+          "source_name": "澜序汽车官网参数页（虚构）",
+          "source_ref": "https://lanxu-auto.example/s7/spec",
+          "collected_at": "2026-09-20T02:00:00Z",
+          "last_verified_at": "2026-10-01T02:00:00Z",
+          "reviewer": "事实库审核人（虚构）"
+        },
+        "valid_from": "2026-09-01",
+        "valid_until": null,
+        "status": "active",
+        "version": 0,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "适用条件的值不是字符串",
+      "expect": {
+        "path": "/conditions/test_cycle",
+        "keyword": "type"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "fact_id": "F-S7-RANGE-CLTC",
+        "project_id": "auto-demo",
+        "entity_id": "product-lanxu-s7",
+        "attribute": "续航里程",
+        "value": 620,
+        "unit": "km",
+        "conditions": {
+          "test_cycle": 1,
+          "trim": "长续航版"
+        },
+        "zone": "fact",
+        "source_tier": "C",
+        "content_use": "specification",
+        "is_core": true,
+        "evidence": {
+          "evidence_id": "EV-0001",
+          "source_name": "澜序汽车官网参数页（虚构）",
+          "source_ref": "https://lanxu-auto.example/s7/spec",
+          "collected_at": "2026-09-20T02:00:00Z",
+          "last_verified_at": "2026-10-01T02:00:00Z",
+          "reviewer": "事实库审核人（虚构）"
+        },
+        "valid_from": "2026-09-01",
+        "valid_until": null,
+        "status": "active",
+        "version": 1,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "范围值缺少上限",
+      "expect": {
+        "path": "/value",
+        "keyword": "anyOf"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "fact_id": "F-S7-RANGE-CLTC",
+        "project_id": "auto-demo",
+        "entity_id": "product-lanxu-s7",
+        "attribute": "续航里程",
+        "value": {
+          "min": 600
+        },
+        "unit": "km",
+        "conditions": {
+          "test_cycle": "CLTC",
+          "trim": "长续航版"
+        },
+        "zone": "fact",
+        "source_tier": "C",
+        "content_use": "specification",
+        "is_core": true,
+        "evidence": {
+          "evidence_id": "EV-0001",
+          "source_name": "澜序汽车官网参数页（虚构）",
+          "source_ref": "https://lanxu-auto.example/s7/spec",
+          "collected_at": "2026-09-20T02:00:00Z",
+          "last_verified_at": "2026-10-01T02:00:00Z",
+          "reviewer": "事实库审核人（虚构）"
+        },
+        "valid_from": "2026-09-01",
+        "valid_until": null,
+        "status": "active",
+        "version": 1,
+        "synthetic": true
+      }
+    }
+  ]
+}

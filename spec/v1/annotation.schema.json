@@ -1,0 +1,324 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://geo-verify.example/spec/v1/annotation.schema.json",
+  "title": "标注",
+  "description": "对一条观测中某个实体的提及、推荐、位次、倾向和风险的判断。只追加，人工覆盖通过 supersedes 指向被覆盖的标注。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "annotation_id",
+    "observation_id",
+    "project_id",
+    "entity_id",
+    "mentioned",
+    "recommended",
+    "negated",
+    "rankable",
+    "rank",
+    "sentiment",
+    "risk",
+    "annotator",
+    "created_at",
+    "supersedes"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+$"
+    },
+    "annotation_id": {
+      "$ref": "#/$defs/id"
+    },
+    "observation_id": {
+      "$ref": "#/$defs/id"
+    },
+    "project_id": {
+      "$ref": "#/$defs/id"
+    },
+    "entity_id": {
+      "$ref": "#/$defs/id"
+    },
+    "mentioned": {
+      "type": "boolean"
+    },
+    "recommended": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "negated": {
+      "type": "boolean",
+      "description": "否定提及，如“不推荐 X”。"
+    },
+    "rankable": {
+      "type": "boolean",
+      "description": "回答中是否存在可明确识别的推荐序列。"
+    },
+    "rank": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1
+    },
+    "rank_list_size": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1
+    },
+    "sentiment": {
+      "enum": [
+        "positive",
+        "neutral",
+        "negative",
+        null
+      ]
+    },
+    "risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "flags",
+        "unfounded_negative",
+        "identified",
+        "confirmed",
+        "closed"
+      ],
+      "properties": {
+        "flags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "unfounded_negative",
+              "wrong_fact",
+              "outdated_fact",
+              "compliance",
+              "other"
+            ]
+          }
+        },
+        "unfounded_negative": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "identified": {
+          "type": "boolean",
+          "description": "工具或流程是否识别出风险。"
+        },
+        "confirmed": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "人工复核是否确认为应识别的风险；未复核为 null。"
+        },
+        "closed": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "是否已闭环处置。"
+        }
+      }
+    },
+    "citation_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order",
+          "valid",
+          "relevant"
+        ],
+        "properties": {
+          "order": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "valid": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "relevant": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "spans": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "start",
+          "end"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "mention",
+              "recommendation",
+              "negation",
+              "rank"
+            ]
+          },
+          "start": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "end": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "annotator": {
+      "$ref": "#/$defs/actor"
+    },
+    "created_at": {
+      "$ref": "#/$defs/utc_time"
+    },
+    "supersedes": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "note": {
+      "type": "string"
+    },
+    "synthetic": {
+      "type": "boolean"
+    },
+    "ext": {
+      "type": "object"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "mentioned": {
+            "const": false
+          }
+        },
+        "required": [
+          "mentioned"
+        ]
+      },
+      "then": {
+        "properties": {
+          "recommended": {
+            "enum": [
+              false,
+              null
+            ]
+          },
+          "rank": {
+            "type": "null"
+          },
+          "negated": {
+            "const": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "rankable": {
+            "const": false
+          }
+        },
+        "required": [
+          "rankable"
+        ]
+      },
+      "then": {
+        "properties": {
+          "rank": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "negated": {
+            "const": true
+          }
+        },
+        "required": [
+          "negated"
+        ]
+      },
+      "then": {
+        "properties": {
+          "recommended": {
+            "const": false
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "utc_time": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "version"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "rule",
+            "model",
+            "human"
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/text"
+        },
+        "version": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    }
+  }
+}

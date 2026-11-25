@@ -1,0 +1,429 @@
+{
+  "contract": "annotation",
+  "valid": [
+    {
+      "schema_version": "1.0",
+      "annotation_id": "ann-000001",
+      "observation_id": "obs-000001",
+      "project_id": "auto-demo",
+      "entity_id": "brand-lanxu",
+      "mentioned": true,
+      "recommended": true,
+      "negated": false,
+      "rankable": true,
+      "rank": 1,
+      "rank_list_size": 2,
+      "sentiment": "positive",
+      "risk": {
+        "flags": [],
+        "unfounded_negative": false,
+        "identified": false,
+        "confirmed": null,
+        "closed": null
+      },
+      "citation_checks": [
+        {
+          "order": 1,
+          "valid": true,
+          "relevant": true
+        }
+      ],
+      "spans": [
+        {
+          "kind": "mention",
+          "start": 9,
+          "end": 11
+        }
+      ],
+      "annotator": {
+        "type": "rule",
+        "id": "geo-verify-rules",
+        "version": "1.0"
+      },
+      "created_at": "2026-10-08T03:00:00Z",
+      "supersedes": null,
+      "synthetic": true
+    },
+    {
+      "schema_version": "1.0",
+      "annotation_id": "ann-000002",
+      "observation_id": "obs-000001",
+      "project_id": "auto-demo",
+      "entity_id": "brand-cenye",
+      "mentioned": true,
+      "recommended": false,
+      "negated": true,
+      "rankable": false,
+      "rank": null,
+      "sentiment": "negative",
+      "risk": {
+        "flags": [
+          "unfounded_negative"
+        ],
+        "unfounded_negative": true,
+        "identified": true,
+        "confirmed": true,
+        "closed": false
+      },
+      "annotator": {
+        "type": "human",
+        "id": "reviewer-01",
+        "version": "guideline-1.0"
+      },
+      "created_at": "2026-10-08T04:00:00Z",
+      "supersedes": "ann-000001",
+      "note": "人工复核覆盖规则结果"
+    }
+  ],
+  "invalid": [
+    {
+      "why": "未提及却给了位次",
+      "expect": {
+        "path": "/rank",
+        "keyword": "type"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "annotation_id": "ann-000001",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "entity_id": "brand-lanxu",
+        "mentioned": false,
+        "recommended": false,
+        "negated": false,
+        "rankable": true,
+        "rank": 1,
+        "rank_list_size": 2,
+        "sentiment": "positive",
+        "risk": {
+          "flags": [],
+          "unfounded_negative": false,
+          "identified": false,
+          "confirmed": null,
+          "closed": null
+        },
+        "citation_checks": [
+          {
+            "order": 1,
+            "valid": true,
+            "relevant": true
+          }
+        ],
+        "spans": [
+          {
+            "kind": "mention",
+            "start": 9,
+            "end": 11
+          }
+        ],
+        "annotator": {
+          "type": "rule",
+          "id": "geo-verify-rules",
+          "version": "1.0"
+        },
+        "created_at": "2026-10-08T03:00:00Z",
+        "supersedes": null,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "没有可识别的推荐序列却给了位次",
+      "expect": {
+        "path": "/rank",
+        "keyword": "type"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "annotation_id": "ann-000001",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "entity_id": "brand-lanxu",
+        "mentioned": true,
+        "recommended": true,
+        "negated": false,
+        "rankable": false,
+        "rank": 1,
+        "rank_list_size": 2,
+        "sentiment": "positive",
+        "risk": {
+          "flags": [],
+          "unfounded_negative": false,
+          "identified": false,
+          "confirmed": null,
+          "closed": null
+        },
+        "citation_checks": [
+          {
+            "order": 1,
+            "valid": true,
+            "relevant": true
+          }
+        ],
+        "spans": [
+          {
+            "kind": "mention",
+            "start": 9,
+            "end": 11
+          }
+        ],
+        "annotator": {
+          "type": "rule",
+          "id": "geo-verify-rules",
+          "version": "1.0"
+        },
+        "created_at": "2026-10-08T03:00:00Z",
+        "supersedes": null,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "否定提及被记成推荐",
+      "expect": {
+        "path": "/recommended",
+        "keyword": "const"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "annotation_id": "ann-000001",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "entity_id": "brand-lanxu",
+        "mentioned": true,
+        "recommended": true,
+        "negated": true,
+        "rankable": true,
+        "rank": 1,
+        "rank_list_size": 2,
+        "sentiment": "positive",
+        "risk": {
+          "flags": [],
+          "unfounded_negative": false,
+          "identified": false,
+          "confirmed": null,
+          "closed": null
+        },
+        "citation_checks": [
+          {
+            "order": 1,
+            "valid": true,
+            "relevant": true
+          }
+        ],
+        "spans": [
+          {
+            "kind": "mention",
+            "start": 9,
+            "end": 11
+          }
+        ],
+        "annotator": {
+          "type": "rule",
+          "id": "geo-verify-rules",
+          "version": "1.0"
+        },
+        "created_at": "2026-10-08T03:00:00Z",
+        "supersedes": null,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "标注者类型不在规则、模型、人工之内",
+      "expect": {
+        "path": "/annotator/type",
+        "keyword": "enum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "annotation_id": "ann-000001",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "entity_id": "brand-lanxu",
+        "mentioned": true,
+        "recommended": true,
+        "negated": false,
+        "rankable": true,
+        "rank": 1,
+        "rank_list_size": 2,
+        "sentiment": "positive",
+        "risk": {
+          "flags": [],
+          "unfounded_negative": false,
+          "identified": false,
+          "confirmed": null,
+          "closed": null
+        },
+        "citation_checks": [
+          {
+            "order": 1,
+            "valid": true,
+            "relevant": true
+          }
+        ],
+        "spans": [
+          {
+            "kind": "mention",
+            "start": 9,
+            "end": 11
+          }
+        ],
+        "annotator": {
+          "type": "bot",
+          "id": "geo-verify-rules",
+          "version": "1.0"
+        },
+        "created_at": "2026-10-08T03:00:00Z",
+        "supersedes": null,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "缺少标注者版本",
+      "expect": {
+        "path": "/annotator",
+        "keyword": "required"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "annotation_id": "ann-000001",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "entity_id": "brand-lanxu",
+        "mentioned": true,
+        "recommended": true,
+        "negated": false,
+        "rankable": true,
+        "rank": 1,
+        "rank_list_size": 2,
+        "sentiment": "positive",
+        "risk": {
+          "flags": [],
+          "unfounded_negative": false,
+          "identified": false,
+          "confirmed": null,
+          "closed": null
+        },
+        "citation_checks": [
+          {
+            "order": 1,
+            "valid": true,
+            "relevant": true
+          }
+        ],
+        "spans": [
+          {
+            "kind": "mention",
+            "start": 9,
+            "end": 11
+          }
+        ],
+        "annotator": {
+          "type": "rule",
+          "id": "geo-verify-rules"
+        },
+        "created_at": "2026-10-08T03:00:00Z",
+        "supersedes": null,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "位次从 0 开始",
+      "expect": {
+        "path": "/rank",
+        "keyword": "minimum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "annotation_id": "ann-000001",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "entity_id": "brand-lanxu",
+        "mentioned": true,
+        "recommended": true,
+        "negated": false,
+        "rankable": true,
+        "rank": 0,
+        "rank_list_size": 2,
+        "sentiment": "positive",
+        "risk": {
+          "flags": [],
+          "unfounded_negative": false,
+          "identified": false,
+          "confirmed": null,
+          "closed": null
+        },
+        "citation_checks": [
+          {
+            "order": 1,
+            "valid": true,
+            "relevant": true
+          }
+        ],
+        "spans": [
+          {
+            "kind": "mention",
+            "start": 9,
+            "end": 11
+          }
+        ],
+        "annotator": {
+          "type": "rule",
+          "id": "geo-verify-rules",
+          "version": "1.0"
+        },
+        "created_at": "2026-10-08T03:00:00Z",
+        "supersedes": null,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "倾向取值非法",
+      "expect": {
+        "path": "/sentiment",
+        "keyword": "enum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "annotation_id": "ann-000001",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "entity_id": "brand-lanxu",
+        "mentioned": true,
+        "recommended": true,
+        "negated": false,
+        "rankable": true,
+        "rank": 1,
+        "rank_list_size": 2,
+        "sentiment": "mixed",
+        "risk": {
+          "flags": [],
+          "unfounded_negative": false,
+          "identified": false,
+          "confirmed": null,
+          "closed": null
+        },
+        "citation_checks": [
+          {
+            "order": 1,
+            "valid": true,
+            "relevant": true
+          }
+        ],
+        "spans": [
+          {
+            "kind": "mention",
+            "start": 9,
+            "end": 11
+          }
+        ],
+        "annotator": {
+          "type": "rule",
+          "id": "geo-verify-rules",
+          "version": "1.0"
+        },
+        "created_at": "2026-10-08T03:00:00Z",
+        "supersedes": null,
+        "synthetic": true
+      }
+    }
+  ]
+}

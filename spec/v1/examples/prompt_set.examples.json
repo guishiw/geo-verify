@@ -1,0 +1,347 @@
+{
+  "contract": "prompt_set",
+  "valid": [
+    {
+      "schema_version": "1.0",
+      "prompt_set_id": "auto-demo-prompts",
+      "project_id": "auto-demo",
+      "version": 1,
+      "previous_hash": null,
+      "prompts": [
+        {
+          "query_id": "Q001",
+          "text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+          "intent_type": "category",
+          "business_level": "L3",
+          "priority": "P0",
+          "source": "委托方提供的用户调研问题（虚构）",
+          "expects_recommendation": true,
+          "core_fact_ids": [
+            "F-S7-RANGE-CLTC"
+          ]
+        },
+        {
+          "query_id": "Q002",
+          "text": "澜序 S7 的续航是多少？",
+          "intent_type": "product",
+          "business_level": "L1",
+          "priority": "P1",
+          "source": "客服高频问题（虚构）"
+        }
+      ],
+      "preregistration_hash": "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d",
+      "sealed_by": "甲方项目负责人（虚构）",
+      "sealed_at": "2026-10-02T03:00:00Z",
+      "content_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+      "synthetic": true
+    }
+  ],
+  "invalid": [
+    {
+      "why": "题库为空",
+      "expect": {
+        "path": "/prompts",
+        "keyword": "minItems"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "prompt_set_id": "auto-demo-prompts",
+        "project_id": "auto-demo",
+        "version": 1,
+        "previous_hash": null,
+        "prompts": [],
+        "preregistration_hash": "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d",
+        "sealed_by": "甲方项目负责人（虚构）",
+        "sealed_at": "2026-10-02T03:00:00Z",
+        "content_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "意图类型不在登记范围",
+      "expect": {
+        "path": "/prompts/0/intent_type",
+        "keyword": "enum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "prompt_set_id": "auto-demo-prompts",
+        "project_id": "auto-demo",
+        "version": 1,
+        "previous_hash": null,
+        "prompts": [
+          {
+            "query_id": "Q001",
+            "text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+            "intent_type": "seo",
+            "business_level": "L3",
+            "priority": "P0",
+            "source": "委托方提供的用户调研问题（虚构）",
+            "expects_recommendation": true,
+            "core_fact_ids": [
+              "F-S7-RANGE-CLTC"
+            ]
+          },
+          {
+            "query_id": "Q002",
+            "text": "澜序 S7 的续航是多少？",
+            "intent_type": "product",
+            "business_level": "L1",
+            "priority": "P1",
+            "source": "客服高频问题（虚构）"
+          }
+        ],
+        "preregistration_hash": "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d",
+        "sealed_by": "甲方项目负责人（虚构）",
+        "sealed_at": "2026-10-02T03:00:00Z",
+        "content_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "内容哈希不是 SHA-256",
+      "expect": {
+        "path": "/content_hash",
+        "keyword": "pattern"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "prompt_set_id": "auto-demo-prompts",
+        "project_id": "auto-demo",
+        "version": 1,
+        "previous_hash": null,
+        "prompts": [
+          {
+            "query_id": "Q001",
+            "text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+            "intent_type": "category",
+            "business_level": "L3",
+            "priority": "P0",
+            "source": "委托方提供的用户调研问题（虚构）",
+            "expects_recommendation": true,
+            "core_fact_ids": [
+              "F-S7-RANGE-CLTC"
+            ]
+          },
+          {
+            "query_id": "Q002",
+            "text": "澜序 S7 的续航是多少？",
+            "intent_type": "product",
+            "business_level": "L1",
+            "priority": "P1",
+            "source": "客服高频问题（虚构）"
+          }
+        ],
+        "preregistration_hash": "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d",
+        "sealed_by": "甲方项目负责人（虚构）",
+        "sealed_at": "2026-10-02T03:00:00Z",
+        "content_hash": "abc123",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "首版却带有前一版本哈希",
+      "expect": {
+        "path": "/previous_hash",
+        "keyword": "type"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "prompt_set_id": "auto-demo-prompts",
+        "project_id": "auto-demo",
+        "version": 1,
+        "previous_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+        "prompts": [
+          {
+            "query_id": "Q001",
+            "text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+            "intent_type": "category",
+            "business_level": "L3",
+            "priority": "P0",
+            "source": "委托方提供的用户调研问题（虚构）",
+            "expects_recommendation": true,
+            "core_fact_ids": [
+              "F-S7-RANGE-CLTC"
+            ]
+          },
+          {
+            "query_id": "Q002",
+            "text": "澜序 S7 的续航是多少？",
+            "intent_type": "product",
+            "business_level": "L1",
+            "priority": "P1",
+            "source": "客服高频问题（虚构）"
+          }
+        ],
+        "preregistration_hash": "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d",
+        "sealed_by": "甲方项目负责人（虚构）",
+        "sealed_at": "2026-10-02T03:00:00Z",
+        "content_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "第 2 版缺少前一版本哈希",
+      "expect": {
+        "path": "/previous_hash",
+        "keyword": "pattern"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "prompt_set_id": "auto-demo-prompts",
+        "project_id": "auto-demo",
+        "version": 2,
+        "previous_hash": "",
+        "prompts": [
+          {
+            "query_id": "Q001",
+            "text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+            "intent_type": "category",
+            "business_level": "L3",
+            "priority": "P0",
+            "source": "委托方提供的用户调研问题（虚构）",
+            "expects_recommendation": true,
+            "core_fact_ids": [
+              "F-S7-RANGE-CLTC"
+            ]
+          },
+          {
+            "query_id": "Q002",
+            "text": "澜序 S7 的续航是多少？",
+            "intent_type": "product",
+            "business_level": "L1",
+            "priority": "P1",
+            "source": "客服高频问题（虚构）"
+          }
+        ],
+        "preregistration_hash": "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d",
+        "sealed_by": "甲方项目负责人（虚构）",
+        "sealed_at": "2026-10-02T03:00:00Z",
+        "content_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "缺少封存人",
+      "expect": {
+        "path": "",
+        "keyword": "required"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "prompt_set_id": "auto-demo-prompts",
+        "project_id": "auto-demo",
+        "version": 1,
+        "previous_hash": null,
+        "prompts": [
+          {
+            "query_id": "Q001",
+            "text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+            "intent_type": "category",
+            "business_level": "L3",
+            "priority": "P0",
+            "source": "委托方提供的用户调研问题（虚构）",
+            "expects_recommendation": true,
+            "core_fact_ids": [
+              "F-S7-RANGE-CLTC"
+            ]
+          },
+          {
+            "query_id": "Q002",
+            "text": "澜序 S7 的续航是多少？",
+            "intent_type": "product",
+            "business_level": "L1",
+            "priority": "P1",
+            "source": "客服高频问题（虚构）"
+          }
+        ],
+        "preregistration_hash": "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d",
+        "sealed_at": "2026-10-02T03:00:00Z",
+        "content_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "题目文本为空白",
+      "expect": {
+        "path": "/prompts/1/text",
+        "keyword": "pattern"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "prompt_set_id": "auto-demo-prompts",
+        "project_id": "auto-demo",
+        "version": 1,
+        "previous_hash": null,
+        "prompts": [
+          {
+            "query_id": "Q001",
+            "text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+            "intent_type": "category",
+            "business_level": "L3",
+            "priority": "P0",
+            "source": "委托方提供的用户调研问题（虚构）",
+            "expects_recommendation": true,
+            "core_fact_ids": [
+              "F-S7-RANGE-CLTC"
+            ]
+          },
+          {
+            "query_id": "Q002",
+            "text": "   ",
+            "intent_type": "product",
+            "business_level": "L1",
+            "priority": "P1",
+            "source": "客服高频问题（虚构）"
+          }
+        ],
+        "preregistration_hash": "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d",
+        "sealed_by": "甲方项目负责人（虚构）",
+        "sealed_at": "2026-10-02T03:00:00Z",
+        "content_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "用业务三级冒充意图类型",
+      "expect": {
+        "path": "/prompts/0/intent_type",
+        "keyword": "enum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "prompt_set_id": "auto-demo-prompts",
+        "project_id": "auto-demo",
+        "version": 1,
+        "previous_hash": null,
+        "prompts": [
+          {
+            "query_id": "Q001",
+            "text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+            "intent_type": "L1",
+            "business_level": "L3",
+            "priority": "P0",
+            "source": "委托方提供的用户调研问题（虚构）",
+            "expects_recommendation": true,
+            "core_fact_ids": [
+              "F-S7-RANGE-CLTC"
+            ]
+          },
+          {
+            "query_id": "Q002",
+            "text": "澜序 S7 的续航是多少？",
+            "intent_type": "product",
+            "business_level": "L1",
+            "priority": "P1",
+            "source": "客服高频问题（虚构）"
+          }
+        ],
+        "preregistration_hash": "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d",
+        "sealed_by": "甲方项目负责人（虚构）",
+        "sealed_at": "2026-10-02T03:00:00Z",
+        "content_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "synthetic": true
+      }
+    }
+  ]
+}

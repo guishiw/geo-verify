@@ -1,0 +1,253 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://geo-verify.example/spec/v1/fact.schema.json",
+  "title": "事实",
+  "description": "事实库条目：实体、属性、值、单位、适用条件、分区、证据绑定、来源等级、生效和失效日期、版本。来源等级与内容用途是两个独立字段。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "fact_id",
+    "project_id",
+    "entity_id",
+    "attribute",
+    "value",
+    "unit",
+    "conditions",
+    "zone",
+    "source_tier",
+    "content_use",
+    "is_core",
+    "evidence",
+    "valid_from",
+    "valid_until",
+    "status",
+    "version"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+$"
+    },
+    "fact_id": {
+      "$ref": "#/$defs/id"
+    },
+    "project_id": {
+      "$ref": "#/$defs/id"
+    },
+    "entity_id": {
+      "$ref": "#/$defs/id"
+    },
+    "attribute": {
+      "$ref": "#/$defs/text"
+    },
+    "value": {
+      "$ref": "#/$defs/fact_value"
+    },
+    "unit": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/text"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "conditions": {
+      "$ref": "#/$defs/conditions"
+    },
+    "zone": {
+      "enum": [
+        "fact",
+        "opinion",
+        "marketing"
+      ]
+    },
+    "source_tier": {
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        null
+      ]
+    },
+    "content_use": {
+      "enum": [
+        "specification",
+        "pricing",
+        "policy",
+        "test_result",
+        "review",
+        "promotion",
+        "other"
+      ]
+    },
+    "is_core": {
+      "type": "boolean"
+    },
+    "evidence": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "evidence_id",
+            "source_name",
+            "source_ref",
+            "collected_at",
+            "last_verified_at",
+            "reviewer"
+          ],
+          "properties": {
+            "evidence_id": {
+              "$ref": "#/$defs/id"
+            },
+            "source_name": {
+              "$ref": "#/$defs/text"
+            },
+            "source_ref": {
+              "$ref": "#/$defs/text"
+            },
+            "collected_at": {
+              "$ref": "#/$defs/utc_time"
+            },
+            "last_verified_at": {
+              "$ref": "#/$defs/utc_time"
+            },
+            "reviewer": {
+              "$ref": "#/$defs/text"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "valid_from": {
+      "$ref": "#/$defs/date"
+    },
+    "valid_until": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/date"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "status": {
+      "enum": [
+        "active",
+        "retracted",
+        "disputed"
+      ]
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "aliases": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/text"
+      }
+    },
+    "note": {
+      "type": "string"
+    },
+    "synthetic": {
+      "type": "boolean"
+    },
+    "ext": {
+      "type": "object"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "zone": {
+            "const": "fact"
+          }
+        },
+        "required": [
+          "zone"
+        ]
+      },
+      "then": {
+        "properties": {
+          "source_tier": {
+            "$ref": "#/$defs/tier"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "utc_time": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$"
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "tier": {
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ]
+    },
+    "fact_value": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "$ref": "#/$defs/text"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "min",
+            "max"
+          ],
+          "properties": {
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            }
+          }
+        }
+      ]
+    },
+    "conditions": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/text"
+      }
+    }
+  }
+}

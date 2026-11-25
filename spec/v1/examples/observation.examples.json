@@ -1,0 +1,902 @@
+{
+  "contract": "observation",
+  "valid": [
+    {
+      "schema_version": "1.0",
+      "observation_id": "obs-000001",
+      "project_id": "auto-demo",
+      "trace_id": "trace-000001",
+      "prompt_set_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+      "query_id": "Q001",
+      "prompt_text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+      "platform": "engine-a",
+      "entry_form": "api",
+      "model_version": "engine-a-2026.10",
+      "entry_features": null,
+      "channel": "api",
+      "started_at": "2026-10-08T02:00:00Z",
+      "ended_at": "2026-10-08T02:00:09Z",
+      "logged_in": null,
+      "history_cleared": true,
+      "web_search": true,
+      "region": null,
+      "device": null,
+      "answer_text": "可以考虑：1. 澜序 S7；2. 岑野 K5。澜序 S7 的 CLTC 续航为 620 公里[1]。",
+      "citations": [
+        {
+          "order": 1,
+          "url": "https://lanxu-auto.example/s7/spec",
+          "domain": "lanxu-auto.example",
+          "title": "澜序 S7 参数（虚构）",
+          "placement": "inline"
+        },
+        {
+          "order": 2,
+          "url": "https://auto-review.example/ev-suv",
+          "domain": "auto-review.example",
+          "title": null,
+          "placement": "source_list"
+        }
+      ],
+      "snapshots": [
+        {
+          "path": "snapshots/obs-000001.json",
+          "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+          "media_type": "application/json"
+        }
+      ],
+      "collector": {
+        "tool": "geo-verify",
+        "version": "0.1.0"
+      },
+      "operator": "采集员甲（虚构）",
+      "window_id": "W1",
+      "attempt": 1,
+      "status": "valid",
+      "invalid_reason": null,
+      "null_reasons": {
+        "logged_in": "API 通道无登录态概念",
+        "region": "接口未返回地域信息",
+        "device": "API 通道无设备信息"
+      },
+      "synthetic": true
+    },
+    {
+      "schema_version": "1.0",
+      "observation_id": "obs-000002",
+      "project_id": "auto-demo",
+      "trace_id": "trace-000002",
+      "prompt_set_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+      "query_id": "Q002",
+      "prompt_text": "澜序 S7 的续航是多少？",
+      "platform": "engine-b",
+      "entry_form": "web",
+      "model_version": null,
+      "entry_features": "网页端默认模式，页面未展示模型名，界面底部版本号 3.2",
+      "channel": "manual",
+      "started_at": "2026-10-08T02:00:00Z",
+      "ended_at": "2026-10-08T02:00:09Z",
+      "logged_in": false,
+      "history_cleared": true,
+      "web_search": true,
+      "region": "CN-SH",
+      "device": "desktop-chrome",
+      "answer_text": null,
+      "citations": [],
+      "snapshots": [],
+      "collector": {
+        "tool": "geo-verify",
+        "version": "0.1.0"
+      },
+      "operator": "采集员乙（虚构）",
+      "window_id": "W1",
+      "attempt": 2,
+      "status": "invalid",
+      "invalid_reason": "timeout",
+      "null_reasons": {
+        "model_version": "页面未展示模型版本",
+        "answer_text": "请求超时，未获得回答",
+        "snapshots": "请求超时，无可保存内容"
+      }
+    }
+  ],
+  "invalid": [
+    {
+      "why": "缺少回答原文字段",
+      "expect": {
+        "path": "",
+        "keyword": "required"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "trace_id": "trace-000001",
+        "prompt_set_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "query_id": "Q001",
+        "prompt_text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+        "platform": "engine-a",
+        "entry_form": "api",
+        "model_version": "engine-a-2026.10",
+        "entry_features": null,
+        "channel": "api",
+        "started_at": "2026-10-08T02:00:00Z",
+        "ended_at": "2026-10-08T02:00:09Z",
+        "logged_in": null,
+        "history_cleared": true,
+        "web_search": true,
+        "region": null,
+        "device": null,
+        "citations": [
+          {
+            "order": 1,
+            "url": "https://lanxu-auto.example/s7/spec",
+            "domain": "lanxu-auto.example",
+            "title": "澜序 S7 参数（虚构）",
+            "placement": "inline"
+          },
+          {
+            "order": 2,
+            "url": "https://auto-review.example/ev-suv",
+            "domain": "auto-review.example",
+            "title": null,
+            "placement": "source_list"
+          }
+        ],
+        "snapshots": [
+          {
+            "path": "snapshots/obs-000001.json",
+            "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+            "media_type": "application/json"
+          }
+        ],
+        "collector": {
+          "tool": "geo-verify",
+          "version": "0.1.0"
+        },
+        "operator": "采集员甲（虚构）",
+        "window_id": "W1",
+        "attempt": 1,
+        "status": "valid",
+        "invalid_reason": null,
+        "null_reasons": {
+          "logged_in": "API 通道无登录态概念",
+          "region": "接口未返回地域信息",
+          "device": "API 通道无设备信息"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "无效观测没有写无效原因",
+      "expect": {
+        "path": "/invalid_reason",
+        "keyword": "type"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "trace_id": "trace-000001",
+        "prompt_set_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "query_id": "Q001",
+        "prompt_text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+        "platform": "engine-a",
+        "entry_form": "api",
+        "model_version": "engine-a-2026.10",
+        "entry_features": null,
+        "channel": "api",
+        "started_at": "2026-10-08T02:00:00Z",
+        "ended_at": "2026-10-08T02:00:09Z",
+        "logged_in": null,
+        "history_cleared": true,
+        "web_search": true,
+        "region": null,
+        "device": null,
+        "answer_text": "可以考虑：1. 澜序 S7；2. 岑野 K5。澜序 S7 的 CLTC 续航为 620 公里[1]。",
+        "citations": [
+          {
+            "order": 1,
+            "url": "https://lanxu-auto.example/s7/spec",
+            "domain": "lanxu-auto.example",
+            "title": "澜序 S7 参数（虚构）",
+            "placement": "inline"
+          },
+          {
+            "order": 2,
+            "url": "https://auto-review.example/ev-suv",
+            "domain": "auto-review.example",
+            "title": null,
+            "placement": "source_list"
+          }
+        ],
+        "snapshots": [
+          {
+            "path": "snapshots/obs-000001.json",
+            "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+            "media_type": "application/json"
+          }
+        ],
+        "collector": {
+          "tool": "geo-verify",
+          "version": "0.1.0"
+        },
+        "operator": "采集员甲（虚构）",
+        "window_id": "W1",
+        "attempt": 1,
+        "status": "invalid",
+        "invalid_reason": null,
+        "null_reasons": {
+          "logged_in": "API 通道无登录态概念",
+          "region": "接口未返回地域信息",
+          "device": "API 通道无设备信息"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "有效观测却带有无效原因",
+      "expect": {
+        "path": "/invalid_reason",
+        "keyword": "type"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "trace_id": "trace-000001",
+        "prompt_set_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "query_id": "Q001",
+        "prompt_text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+        "platform": "engine-a",
+        "entry_form": "api",
+        "model_version": "engine-a-2026.10",
+        "entry_features": null,
+        "channel": "api",
+        "started_at": "2026-10-08T02:00:00Z",
+        "ended_at": "2026-10-08T02:00:09Z",
+        "logged_in": null,
+        "history_cleared": true,
+        "web_search": true,
+        "region": null,
+        "device": null,
+        "answer_text": "可以考虑：1. 澜序 S7；2. 岑野 K5。澜序 S7 的 CLTC 续航为 620 公里[1]。",
+        "citations": [
+          {
+            "order": 1,
+            "url": "https://lanxu-auto.example/s7/spec",
+            "domain": "lanxu-auto.example",
+            "title": "澜序 S7 参数（虚构）",
+            "placement": "inline"
+          },
+          {
+            "order": 2,
+            "url": "https://auto-review.example/ev-suv",
+            "domain": "auto-review.example",
+            "title": null,
+            "placement": "source_list"
+          }
+        ],
+        "snapshots": [
+          {
+            "path": "snapshots/obs-000001.json",
+            "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+            "media_type": "application/json"
+          }
+        ],
+        "collector": {
+          "tool": "geo-verify",
+          "version": "0.1.0"
+        },
+        "operator": "采集员甲（虚构）",
+        "window_id": "W1",
+        "attempt": 1,
+        "status": "valid",
+        "invalid_reason": "timeout",
+        "null_reasons": {
+          "logged_in": "API 通道无登录态概念",
+          "region": "接口未返回地域信息",
+          "device": "API 通道无设备信息"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "字段为 null 但没有 null_reason",
+      "expect": {
+        "path": "/null_reasons",
+        "keyword": "required"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "trace_id": "trace-000001",
+        "prompt_set_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "query_id": "Q001",
+        "prompt_text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+        "platform": "engine-a",
+        "entry_form": "api",
+        "model_version": "engine-a-2026.10",
+        "entry_features": null,
+        "channel": "api",
+        "started_at": "2026-10-08T02:00:00Z",
+        "ended_at": "2026-10-08T02:00:09Z",
+        "logged_in": null,
+        "history_cleared": true,
+        "web_search": true,
+        "region": null,
+        "device": null,
+        "answer_text": "可以考虑：1. 澜序 S7；2. 岑野 K5。澜序 S7 的 CLTC 续航为 620 公里[1]。",
+        "citations": [
+          {
+            "order": 1,
+            "url": "https://lanxu-auto.example/s7/spec",
+            "domain": "lanxu-auto.example",
+            "title": "澜序 S7 参数（虚构）",
+            "placement": "inline"
+          },
+          {
+            "order": 2,
+            "url": "https://auto-review.example/ev-suv",
+            "domain": "auto-review.example",
+            "title": null,
+            "placement": "source_list"
+          }
+        ],
+        "snapshots": [
+          {
+            "path": "snapshots/obs-000001.json",
+            "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+            "media_type": "application/json"
+          }
+        ],
+        "collector": {
+          "tool": "geo-verify",
+          "version": "0.1.0"
+        },
+        "operator": "采集员甲（虚构）",
+        "window_id": "W1",
+        "attempt": 1,
+        "status": "valid",
+        "invalid_reason": null,
+        "null_reasons": {
+          "logged_in": "API 通道无登录态概念",
+          "device": "API 通道无设备信息"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "模型版本未知且没有写入口特征",
+      "expect": {
+        "path": "/entry_features",
+        "keyword": "type"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "trace_id": "trace-000001",
+        "prompt_set_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "query_id": "Q001",
+        "prompt_text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+        "platform": "engine-a",
+        "entry_form": "api",
+        "model_version": null,
+        "entry_features": null,
+        "channel": "api",
+        "started_at": "2026-10-08T02:00:00Z",
+        "ended_at": "2026-10-08T02:00:09Z",
+        "logged_in": null,
+        "history_cleared": true,
+        "web_search": true,
+        "region": null,
+        "device": null,
+        "answer_text": "可以考虑：1. 澜序 S7；2. 岑野 K5。澜序 S7 的 CLTC 续航为 620 公里[1]。",
+        "citations": [
+          {
+            "order": 1,
+            "url": "https://lanxu-auto.example/s7/spec",
+            "domain": "lanxu-auto.example",
+            "title": "澜序 S7 参数（虚构）",
+            "placement": "inline"
+          },
+          {
+            "order": 2,
+            "url": "https://auto-review.example/ev-suv",
+            "domain": "auto-review.example",
+            "title": null,
+            "placement": "source_list"
+          }
+        ],
+        "snapshots": [
+          {
+            "path": "snapshots/obs-000001.json",
+            "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+            "media_type": "application/json"
+          }
+        ],
+        "collector": {
+          "tool": "geo-verify",
+          "version": "0.1.0"
+        },
+        "operator": "采集员甲（虚构）",
+        "window_id": "W1",
+        "attempt": 1,
+        "status": "valid",
+        "invalid_reason": null,
+        "null_reasons": {
+          "logged_in": "API 通道无登录态概念",
+          "region": "接口未返回地域信息",
+          "device": "API 通道无设备信息",
+          "model_version": "未展示"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "API 入口却没有标为 api 通道",
+      "expect": {
+        "path": "/channel",
+        "keyword": "const"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "trace_id": "trace-000001",
+        "prompt_set_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "query_id": "Q001",
+        "prompt_text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+        "platform": "engine-a",
+        "entry_form": "api",
+        "model_version": "engine-a-2026.10",
+        "entry_features": null,
+        "channel": "manual",
+        "started_at": "2026-10-08T02:00:00Z",
+        "ended_at": "2026-10-08T02:00:09Z",
+        "logged_in": null,
+        "history_cleared": true,
+        "web_search": true,
+        "region": null,
+        "device": null,
+        "answer_text": "可以考虑：1. 澜序 S7；2. 岑野 K5。澜序 S7 的 CLTC 续航为 620 公里[1]。",
+        "citations": [
+          {
+            "order": 1,
+            "url": "https://lanxu-auto.example/s7/spec",
+            "domain": "lanxu-auto.example",
+            "title": "澜序 S7 参数（虚构）",
+            "placement": "inline"
+          },
+          {
+            "order": 2,
+            "url": "https://auto-review.example/ev-suv",
+            "domain": "auto-review.example",
+            "title": null,
+            "placement": "source_list"
+          }
+        ],
+        "snapshots": [
+          {
+            "path": "snapshots/obs-000001.json",
+            "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+            "media_type": "application/json"
+          }
+        ],
+        "collector": {
+          "tool": "geo-verify",
+          "version": "0.1.0"
+        },
+        "operator": "采集员甲（虚构）",
+        "window_id": "W1",
+        "attempt": 1,
+        "status": "valid",
+        "invalid_reason": null,
+        "null_reasons": {
+          "logged_in": "API 通道无登录态概念",
+          "region": "接口未返回地域信息",
+          "device": "API 通道无设备信息"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "时间带时区偏移而不是 UTC",
+      "expect": {
+        "path": "/started_at",
+        "keyword": "pattern"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "trace_id": "trace-000001",
+        "prompt_set_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "query_id": "Q001",
+        "prompt_text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+        "platform": "engine-a",
+        "entry_form": "api",
+        "model_version": "engine-a-2026.10",
+        "entry_features": null,
+        "channel": "api",
+        "started_at": "2026-10-08T10:00:00+08:00",
+        "ended_at": "2026-10-08T02:00:09Z",
+        "logged_in": null,
+        "history_cleared": true,
+        "web_search": true,
+        "region": null,
+        "device": null,
+        "answer_text": "可以考虑：1. 澜序 S7；2. 岑野 K5。澜序 S7 的 CLTC 续航为 620 公里[1]。",
+        "citations": [
+          {
+            "order": 1,
+            "url": "https://lanxu-auto.example/s7/spec",
+            "domain": "lanxu-auto.example",
+            "title": "澜序 S7 参数（虚构）",
+            "placement": "inline"
+          },
+          {
+            "order": 2,
+            "url": "https://auto-review.example/ev-suv",
+            "domain": "auto-review.example",
+            "title": null,
+            "placement": "source_list"
+          }
+        ],
+        "snapshots": [
+          {
+            "path": "snapshots/obs-000001.json",
+            "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+            "media_type": "application/json"
+          }
+        ],
+        "collector": {
+          "tool": "geo-verify",
+          "version": "0.1.0"
+        },
+        "operator": "采集员甲（虚构）",
+        "window_id": "W1",
+        "attempt": 1,
+        "status": "valid",
+        "invalid_reason": null,
+        "null_reasons": {
+          "logged_in": "API 通道无登录态概念",
+          "region": "接口未返回地域信息",
+          "device": "API 通道无设备信息"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "引用没有区分正文引用与来源列表",
+      "expect": {
+        "path": "/citations/0",
+        "keyword": "required"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "trace_id": "trace-000001",
+        "prompt_set_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "query_id": "Q001",
+        "prompt_text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+        "platform": "engine-a",
+        "entry_form": "api",
+        "model_version": "engine-a-2026.10",
+        "entry_features": null,
+        "channel": "api",
+        "started_at": "2026-10-08T02:00:00Z",
+        "ended_at": "2026-10-08T02:00:09Z",
+        "logged_in": null,
+        "history_cleared": true,
+        "web_search": true,
+        "region": null,
+        "device": null,
+        "answer_text": "可以考虑：1. 澜序 S7；2. 岑野 K5。澜序 S7 的 CLTC 续航为 620 公里[1]。",
+        "citations": [
+          {
+            "order": 1,
+            "url": "https://lanxu-auto.example/s7/spec",
+            "domain": "lanxu-auto.example",
+            "title": "澜序 S7 参数（虚构）"
+          },
+          {
+            "order": 2,
+            "url": "https://auto-review.example/ev-suv",
+            "domain": "auto-review.example",
+            "title": null,
+            "placement": "source_list"
+          }
+        ],
+        "snapshots": [
+          {
+            "path": "snapshots/obs-000001.json",
+            "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+            "media_type": "application/json"
+          }
+        ],
+        "collector": {
+          "tool": "geo-verify",
+          "version": "0.1.0"
+        },
+        "operator": "采集员甲（虚构）",
+        "window_id": "W1",
+        "attempt": 1,
+        "status": "valid",
+        "invalid_reason": null,
+        "null_reasons": {
+          "logged_in": "API 通道无登录态概念",
+          "region": "接口未返回地域信息",
+          "device": "API 通道无设备信息"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "快照路径越出证据目录",
+      "expect": {
+        "path": "/snapshots/0/path",
+        "keyword": "pattern"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "trace_id": "trace-000001",
+        "prompt_set_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "query_id": "Q001",
+        "prompt_text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+        "platform": "engine-a",
+        "entry_form": "api",
+        "model_version": "engine-a-2026.10",
+        "entry_features": null,
+        "channel": "api",
+        "started_at": "2026-10-08T02:00:00Z",
+        "ended_at": "2026-10-08T02:00:09Z",
+        "logged_in": null,
+        "history_cleared": true,
+        "web_search": true,
+        "region": null,
+        "device": null,
+        "answer_text": "可以考虑：1. 澜序 S7；2. 岑野 K5。澜序 S7 的 CLTC 续航为 620 公里[1]。",
+        "citations": [
+          {
+            "order": 1,
+            "url": "https://lanxu-auto.example/s7/spec",
+            "domain": "lanxu-auto.example",
+            "title": "澜序 S7 参数（虚构）",
+            "placement": "inline"
+          },
+          {
+            "order": 2,
+            "url": "https://auto-review.example/ev-suv",
+            "domain": "auto-review.example",
+            "title": null,
+            "placement": "source_list"
+          }
+        ],
+        "snapshots": [
+          {
+            "path": "../secret.json",
+            "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+            "media_type": "application/json"
+          }
+        ],
+        "collector": {
+          "tool": "geo-verify",
+          "version": "0.1.0"
+        },
+        "operator": "采集员甲（虚构）",
+        "window_id": "W1",
+        "attempt": 1,
+        "status": "valid",
+        "invalid_reason": null,
+        "null_reasons": {
+          "logged_in": "API 通道无登录态概念",
+          "region": "接口未返回地域信息",
+          "device": "API 通道无设备信息"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "同窗次数从 0 开始",
+      "expect": {
+        "path": "/attempt",
+        "keyword": "minimum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "trace_id": "trace-000001",
+        "prompt_set_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "query_id": "Q001",
+        "prompt_text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+        "platform": "engine-a",
+        "entry_form": "api",
+        "model_version": "engine-a-2026.10",
+        "entry_features": null,
+        "channel": "api",
+        "started_at": "2026-10-08T02:00:00Z",
+        "ended_at": "2026-10-08T02:00:09Z",
+        "logged_in": null,
+        "history_cleared": true,
+        "web_search": true,
+        "region": null,
+        "device": null,
+        "answer_text": "可以考虑：1. 澜序 S7；2. 岑野 K5。澜序 S7 的 CLTC 续航为 620 公里[1]。",
+        "citations": [
+          {
+            "order": 1,
+            "url": "https://lanxu-auto.example/s7/spec",
+            "domain": "lanxu-auto.example",
+            "title": "澜序 S7 参数（虚构）",
+            "placement": "inline"
+          },
+          {
+            "order": 2,
+            "url": "https://auto-review.example/ev-suv",
+            "domain": "auto-review.example",
+            "title": null,
+            "placement": "source_list"
+          }
+        ],
+        "snapshots": [
+          {
+            "path": "snapshots/obs-000001.json",
+            "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+            "media_type": "application/json"
+          }
+        ],
+        "collector": {
+          "tool": "geo-verify",
+          "version": "0.1.0"
+        },
+        "operator": "采集员甲（虚构）",
+        "window_id": "W1",
+        "attempt": 0,
+        "status": "valid",
+        "invalid_reason": null,
+        "null_reasons": {
+          "logged_in": "API 通道无登录态概念",
+          "region": "接口未返回地域信息",
+          "device": "API 通道无设备信息"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "出现未知字段",
+      "expect": {
+        "path": "",
+        "keyword": "additionalProperties"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "trace_id": "trace-000001",
+        "prompt_set_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "query_id": "Q001",
+        "prompt_text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+        "platform": "engine-a",
+        "entry_form": "api",
+        "model_version": "engine-a-2026.10",
+        "entry_features": null,
+        "channel": "api",
+        "started_at": "2026-10-08T02:00:00Z",
+        "ended_at": "2026-10-08T02:00:09Z",
+        "logged_in": null,
+        "history_cleared": true,
+        "web_search": true,
+        "region": null,
+        "device": null,
+        "answer_text": "可以考虑：1. 澜序 S7；2. 岑野 K5。澜序 S7 的 CLTC 续航为 620 公里[1]。",
+        "citations": [
+          {
+            "order": 1,
+            "url": "https://lanxu-auto.example/s7/spec",
+            "domain": "lanxu-auto.example",
+            "title": "澜序 S7 参数（虚构）",
+            "placement": "inline"
+          },
+          {
+            "order": 2,
+            "url": "https://auto-review.example/ev-suv",
+            "domain": "auto-review.example",
+            "title": null,
+            "placement": "source_list"
+          }
+        ],
+        "snapshots": [
+          {
+            "path": "snapshots/obs-000001.json",
+            "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+            "media_type": "application/json"
+          }
+        ],
+        "collector": {
+          "tool": "geo-verify",
+          "version": "0.1.0"
+        },
+        "operator": "采集员甲（虚构）",
+        "window_id": "W1",
+        "attempt": 1,
+        "status": "valid",
+        "invalid_reason": null,
+        "null_reasons": {
+          "logged_in": "API 通道无登录态概念",
+          "region": "接口未返回地域信息",
+          "device": "API 通道无设备信息"
+        },
+        "synthetic": true,
+        "score": 1
+      }
+    },
+    {
+      "why": "没有快照也没有说明原因",
+      "expect": {
+        "path": "/null_reasons",
+        "keyword": "required"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "observation_id": "obs-000001",
+        "project_id": "auto-demo",
+        "trace_id": "trace-000001",
+        "prompt_set_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "query_id": "Q001",
+        "prompt_text": "20 万左右的纯电 SUV 有哪些值得考虑？",
+        "platform": "engine-a",
+        "entry_form": "api",
+        "model_version": "engine-a-2026.10",
+        "entry_features": null,
+        "channel": "api",
+        "started_at": "2026-10-08T02:00:00Z",
+        "ended_at": "2026-10-08T02:00:09Z",
+        "logged_in": null,
+        "history_cleared": true,
+        "web_search": true,
+        "region": null,
+        "device": null,
+        "answer_text": "可以考虑：1. 澜序 S7；2. 岑野 K5。澜序 S7 的 CLTC 续航为 620 公里[1]。",
+        "citations": [
+          {
+            "order": 1,
+            "url": "https://lanxu-auto.example/s7/spec",
+            "domain": "lanxu-auto.example",
+            "title": "澜序 S7 参数（虚构）",
+            "placement": "inline"
+          },
+          {
+            "order": 2,
+            "url": "https://auto-review.example/ev-suv",
+            "domain": "auto-review.example",
+            "title": null,
+            "placement": "source_list"
+          }
+        ],
+        "snapshots": [],
+        "collector": {
+          "tool": "geo-verify",
+          "version": "0.1.0"
+        },
+        "operator": "采集员甲（虚构）",
+        "window_id": "W1",
+        "attempt": 1,
+        "status": "valid",
+        "invalid_reason": null,
+        "null_reasons": {
+          "logged_in": "API 通道无登录态概念",
+          "region": "接口未返回地域信息",
+          "device": "API 通道无设备信息"
+        },
+        "synthetic": true
+      }
+    }
+  ]
+}

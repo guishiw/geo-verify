@@ -1,0 +1,638 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://geo-verify.example/spec/v1/observation.schema.json",
+  "title": "观测",
+  "description": "一次提问的完整记录。写入后不可变；更正通过新增 audit_event 和新版本表达。无法获得的字段填 null 并在 null_reasons 中说明原因。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "observation_id",
+    "project_id",
+    "trace_id",
+    "prompt_set_hash",
+    "query_id",
+    "prompt_text",
+    "platform",
+    "entry_form",
+    "model_version",
+    "entry_features",
+    "channel",
+    "started_at",
+    "ended_at",
+    "logged_in",
+    "history_cleared",
+    "web_search",
+    "region",
+    "device",
+    "answer_text",
+    "citations",
+    "snapshots",
+    "collector",
+    "operator",
+    "window_id",
+    "attempt",
+    "status",
+    "invalid_reason"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+$"
+    },
+    "observation_id": {
+      "$ref": "#/$defs/id"
+    },
+    "project_id": {
+      "$ref": "#/$defs/id"
+    },
+    "trace_id": {
+      "$ref": "#/$defs/id"
+    },
+    "prompt_set_hash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "query_id": {
+      "$ref": "#/$defs/id"
+    },
+    "prompt_text": {
+      "$ref": "#/$defs/text"
+    },
+    "platform": {
+      "$ref": "#/$defs/id"
+    },
+    "entry_form": {
+      "$ref": "#/$defs/entry_form"
+    },
+    "model_version": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/text"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "entry_features": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/text"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "channel": {
+      "$ref": "#/$defs/channel"
+    },
+    "started_at": {
+      "$ref": "#/$defs/utc_time"
+    },
+    "ended_at": {
+      "$ref": "#/$defs/utc_time"
+    },
+    "logged_in": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "history_cleared": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "web_search": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "region": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/text"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "device": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/text"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "answer_text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "citations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order",
+          "url",
+          "domain",
+          "title",
+          "placement"
+        ],
+        "properties": {
+          "order": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "url": {
+            "$ref": "#/$defs/text"
+          },
+          "domain": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/hostname"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "placement": {
+            "enum": [
+              "inline",
+              "source_list"
+            ],
+            "description": "inline=正文引用；source_list=仅出现在来源列表。"
+          }
+        }
+      }
+    },
+    "snapshots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "sha256",
+          "media_type"
+        ],
+        "properties": {
+          "path": {
+            "$ref": "#/$defs/relative_path"
+          },
+          "sha256": {
+            "$ref": "#/$defs/sha256"
+          },
+          "media_type": {
+            "$ref": "#/$defs/text"
+          }
+        }
+      }
+    },
+    "collector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool",
+        "version"
+      ],
+      "properties": {
+        "tool": {
+          "$ref": "#/$defs/text"
+        },
+        "version": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "operator": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/text"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "window_id": {
+      "$ref": "#/$defs/id"
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "status": {
+      "enum": [
+        "valid",
+        "invalid"
+      ]
+    },
+    "invalid_reason": {
+      "enum": [
+        "timeout",
+        "rate_limited",
+        "empty_answer",
+        "truncated",
+        "garbled",
+        "error",
+        "other",
+        null
+      ]
+    },
+    "null_reasons": {
+      "type": "object",
+      "propertyNames": {
+        "enum": [
+          "model_version",
+          "logged_in",
+          "history_cleared",
+          "web_search",
+          "region",
+          "device",
+          "answer_text",
+          "operator",
+          "snapshots",
+          "entry_features"
+        ]
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/text"
+      }
+    },
+    "synthetic": {
+      "type": "boolean"
+    },
+    "ext": {
+      "type": "object"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "invalid"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "invalid_reason": {
+            "type": "string"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "invalid_reason": {
+            "type": "null"
+          },
+          "answer_text": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "model_version": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "model_version"
+        ]
+      },
+      "then": {
+        "properties": {
+          "entry_features": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "entry_form": {
+            "const": "api"
+          }
+        },
+        "required": [
+          "entry_form"
+        ]
+      },
+      "then": {
+        "properties": {
+          "channel": {
+            "const": "api"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "channel": {
+            "const": "api"
+          }
+        },
+        "required": [
+          "channel"
+        ]
+      },
+      "then": {
+        "properties": {
+          "entry_form": {
+            "const": "api"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "snapshots": {
+            "maxItems": 0
+          }
+        },
+        "required": [
+          "snapshots"
+        ]
+      },
+      "then": {
+        "required": [
+          "null_reasons"
+        ],
+        "properties": {
+          "null_reasons": {
+            "required": [
+              "snapshots"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "model_version": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "model_version"
+        ]
+      },
+      "then": {
+        "required": [
+          "null_reasons"
+        ],
+        "properties": {
+          "null_reasons": {
+            "required": [
+              "model_version"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "logged_in": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "logged_in"
+        ]
+      },
+      "then": {
+        "required": [
+          "null_reasons"
+        ],
+        "properties": {
+          "null_reasons": {
+            "required": [
+              "logged_in"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "history_cleared": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "history_cleared"
+        ]
+      },
+      "then": {
+        "required": [
+          "null_reasons"
+        ],
+        "properties": {
+          "null_reasons": {
+            "required": [
+              "history_cleared"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "web_search": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "web_search"
+        ]
+      },
+      "then": {
+        "required": [
+          "null_reasons"
+        ],
+        "properties": {
+          "null_reasons": {
+            "required": [
+              "web_search"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "region": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "region"
+        ]
+      },
+      "then": {
+        "required": [
+          "null_reasons"
+        ],
+        "properties": {
+          "null_reasons": {
+            "required": [
+              "region"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "device": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "device"
+        ]
+      },
+      "then": {
+        "required": [
+          "null_reasons"
+        ],
+        "properties": {
+          "null_reasons": {
+            "required": [
+              "device"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "answer_text": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "answer_text"
+        ]
+      },
+      "then": {
+        "required": [
+          "null_reasons"
+        ],
+        "properties": {
+          "null_reasons": {
+            "required": [
+              "answer_text"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operator": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "operator"
+        ]
+      },
+      "then": {
+        "required": [
+          "null_reasons"
+        ],
+        "properties": {
+          "null_reasons": {
+            "required": [
+              "operator"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "utc_time": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "hostname": {
+      "type": "string",
+      "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$"
+    },
+    "relative_path": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$))[^\\\\]+$"
+    },
+    "channel": {
+      "enum": [
+        "api",
+        "manual",
+        "share_import",
+        "browser_assist",
+        "file_import"
+      ]
+    },
+    "entry_form": {
+      "enum": [
+        "api",
+        "web",
+        "app",
+        "mini_program",
+        "plugin",
+        "other"
+      ]
+    }
+  }
+}

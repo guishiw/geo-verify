@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://geo-verify.example/spec/v1/audit_event.schema.json",
+  "title": "审计事件",
+  "description": "一次变更的记录：变更人、时间、理由、变更前后哈希。事件按哈希链串联，只追加。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_id",
+    "project_id",
+    "actor",
+    "occurred_at",
+    "action",
+    "target",
+    "reason",
+    "before_hash",
+    "after_hash",
+    "previous_event_hash",
+    "event_hash"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+$"
+    },
+    "event_id": {
+      "$ref": "#/$defs/id"
+    },
+    "project_id": {
+      "$ref": "#/$defs/id"
+    },
+    "actor": {
+      "$ref": "#/$defs/text"
+    },
+    "occurred_at": {
+      "$ref": "#/$defs/utc_time"
+    },
+    "action": {
+      "enum": [
+        "register",
+        "seal",
+        "amend_prompts",
+        "import",
+        "collect",
+        "annotate",
+        "override",
+        "exclude",
+        "correct",
+        "build_evidence",
+        "other"
+      ]
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/text"
+        },
+        "id": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "reason": {
+      "$ref": "#/$defs/text"
+    },
+    "before_hash": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/sha256"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "after_hash": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/sha256"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "previous_event_hash": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/sha256"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "event_hash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "details": {
+      "type": "object"
+    },
+    "synthetic": {
+      "type": "boolean"
+    },
+    "ext": {
+      "type": "object"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "exclude"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "required": [
+          "details"
+        ],
+        "properties": {
+          "details": {
+            "type": "object",
+            "required": [
+              "rule_id",
+              "count",
+              "observation_ids"
+            ],
+            "properties": {
+              "rule_id": {
+                "$ref": "#/$defs/id"
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "observation_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "$ref": "#/$defs/id"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "utc_time": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    }
+  }
+}

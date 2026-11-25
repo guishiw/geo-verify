@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://geo-verify.example/spec/v1/entity.schema.json",
+  "title": "实体",
+  "description": "品牌、产品、竞品及其别名、排除词和自有域名。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "entity_id",
+    "project_id",
+    "kind",
+    "role",
+    "name",
+    "aliases",
+    "exclusions",
+    "owned_domains",
+    "parent_entity_id"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+$"
+    },
+    "entity_id": {
+      "$ref": "#/$defs/id"
+    },
+    "project_id": {
+      "$ref": "#/$defs/id"
+    },
+    "kind": {
+      "enum": [
+        "brand",
+        "product"
+      ]
+    },
+    "role": {
+      "enum": [
+        "target",
+        "competitor"
+      ]
+    },
+    "name": {
+      "$ref": "#/$defs/text"
+    },
+    "aliases": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/text"
+      }
+    },
+    "exclusions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/text"
+      },
+      "description": "同形异义排除词：别名出现在这些短语内时不算提及。"
+    },
+    "owned_domains": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/hostname"
+      }
+    },
+    "parent_entity_id": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "synthetic": {
+      "type": "boolean"
+    },
+    "ext": {
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "hostname": {
+      "type": "string",
+      "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$"
+    }
+  }
+}

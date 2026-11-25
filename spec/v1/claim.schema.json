@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://geo-verify.example/spec/v1/claim.schema.json",
+  "title": "陈述",
+  "description": "从回答或稿件中拆出的一条陈述，保留原文字符起止位置（左闭右开，按 Unicode 码点计）。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "claim_id",
+    "source",
+    "text",
+    "span",
+    "entity_id",
+    "attribute",
+    "value",
+    "unit",
+    "conditions",
+    "claim_type",
+    "extractor"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+$"
+    },
+    "claim_id": {
+      "$ref": "#/$defs/id"
+    },
+    "project_id": {
+      "$ref": "#/$defs/id"
+    },
+    "source": {
+      "$ref": "#/$defs/source_ref"
+    },
+    "text": {
+      "$ref": "#/$defs/text"
+    },
+    "span": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start",
+        "end"
+      ],
+      "properties": {
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "entity_id": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "attribute": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/text"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "value": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/fact_value"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "unit": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/text"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "conditions": {
+      "$ref": "#/$defs/conditions"
+    },
+    "claim_type": {
+      "enum": [
+        "numeric",
+        "model",
+        "date",
+        "free_text"
+      ]
+    },
+    "extractor": {
+      "$ref": "#/$defs/actor"
+    },
+    "synthetic": {
+      "type": "boolean"
+    },
+    "ext": {
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "version"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "rule",
+            "model",
+            "human"
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/text"
+        },
+        "version": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "fact_value": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "$ref": "#/$defs/text"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "min",
+            "max"
+          ],
+          "properties": {
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            }
+          }
+        }
+      ]
+    },
+    "conditions": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/text"
+      }
+    },
+    "source_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "observation",
+            "draft"
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    }
+  }
+}

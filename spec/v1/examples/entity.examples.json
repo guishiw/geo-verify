@@ -1,0 +1,207 @@
+{
+  "contract": "entity",
+  "valid": [
+    {
+      "schema_version": "1.0",
+      "entity_id": "brand-lanxu",
+      "project_id": "auto-demo",
+      "kind": "brand",
+      "role": "target",
+      "name": "澜序",
+      "aliases": [
+        "澜序汽车",
+        "LANXU",
+        "Lan-Xu"
+      ],
+      "exclusions": [
+        "波澜序曲"
+      ],
+      "owned_domains": [
+        "lanxu-auto.example"
+      ],
+      "parent_entity_id": null,
+      "synthetic": true
+    },
+    {
+      "schema_version": "1.0",
+      "entity_id": "product-lanxu-s7",
+      "project_id": "auto-demo",
+      "kind": "product",
+      "role": "target",
+      "name": "澜序 S7",
+      "aliases": [
+        "S7",
+        "澜序S7"
+      ],
+      "exclusions": [],
+      "owned_domains": [],
+      "parent_entity_id": "brand-lanxu"
+    }
+  ],
+  "invalid": [
+    {
+      "why": "角色不是 target/competitor",
+      "expect": {
+        "path": "/role",
+        "keyword": "enum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "entity_id": "brand-lanxu",
+        "project_id": "auto-demo",
+        "kind": "brand",
+        "role": "partner",
+        "name": "澜序",
+        "aliases": [
+          "澜序汽车",
+          "LANXU",
+          "Lan-Xu"
+        ],
+        "exclusions": [
+          "波澜序曲"
+        ],
+        "owned_domains": [
+          "lanxu-auto.example"
+        ],
+        "parent_entity_id": null,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "别名重复",
+      "expect": {
+        "path": "/aliases",
+        "keyword": "uniqueItems"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "entity_id": "brand-lanxu",
+        "project_id": "auto-demo",
+        "kind": "brand",
+        "role": "target",
+        "name": "澜序",
+        "aliases": [
+          "澜序汽车",
+          "澜序汽车"
+        ],
+        "exclusions": [
+          "波澜序曲"
+        ],
+        "owned_domains": [
+          "lanxu-auto.example"
+        ],
+        "parent_entity_id": null,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "自有域名带协议头",
+      "expect": {
+        "path": "/owned_domains/0",
+        "keyword": "pattern"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "entity_id": "brand-lanxu",
+        "project_id": "auto-demo",
+        "kind": "brand",
+        "role": "target",
+        "name": "澜序",
+        "aliases": [
+          "澜序汽车",
+          "LANXU",
+          "Lan-Xu"
+        ],
+        "exclusions": [
+          "波澜序曲"
+        ],
+        "owned_domains": [
+          "https://lanxu-auto.example"
+        ],
+        "parent_entity_id": null,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "缺少排除词字段",
+      "expect": {
+        "path": "",
+        "keyword": "required"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "entity_id": "brand-lanxu",
+        "project_id": "auto-demo",
+        "kind": "brand",
+        "role": "target",
+        "name": "澜序",
+        "aliases": [
+          "澜序汽车",
+          "LANXU",
+          "Lan-Xu"
+        ],
+        "owned_domains": [
+          "lanxu-auto.example"
+        ],
+        "parent_entity_id": null,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "名称为空",
+      "expect": {
+        "path": "/name",
+        "keyword": "minLength"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "entity_id": "brand-lanxu",
+        "project_id": "auto-demo",
+        "kind": "brand",
+        "role": "target",
+        "name": "",
+        "aliases": [
+          "澜序汽车",
+          "LANXU",
+          "Lan-Xu"
+        ],
+        "exclusions": [
+          "波澜序曲"
+        ],
+        "owned_domains": [
+          "lanxu-auto.example"
+        ],
+        "parent_entity_id": null,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "类型写成中文",
+      "expect": {
+        "path": "/kind",
+        "keyword": "enum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "entity_id": "brand-lanxu",
+        "project_id": "auto-demo",
+        "kind": "品牌",
+        "role": "target",
+        "name": "澜序",
+        "aliases": [
+          "澜序汽车",
+          "LANXU",
+          "Lan-Xu"
+        ],
+        "exclusions": [
+          "波澜序曲"
+        ],
+        "owned_domains": [
+          "lanxu-auto.example"
+        ],
+        "parent_entity_id": null,
+        "synthetic": true
+      }
+    }
+  ]
+}

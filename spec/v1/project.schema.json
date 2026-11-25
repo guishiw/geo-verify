@@ -1,0 +1,553 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://geo-verify.example/spec/v1/project.schema.json",
+  "title": "项目",
+  "description": "项目、委托方、服务方、时区、平台范围，以及封存前预先登记的指标、口径和阈值；含利益关系披露。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "project_id",
+    "name",
+    "client",
+    "provider",
+    "timezone",
+    "platforms",
+    "target_entity_id",
+    "competitor_entity_ids",
+    "environment",
+    "preregistration",
+    "disclosure"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+$"
+    },
+    "project_id": {
+      "$ref": "#/$defs/id"
+    },
+    "name": {
+      "$ref": "#/$defs/text"
+    },
+    "industry": {
+      "$ref": "#/$defs/text"
+    },
+    "client": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "timezone": {
+      "$ref": "#/$defs/text"
+    },
+    "platforms": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "platform_id",
+          "display_name",
+          "channels"
+        ],
+        "properties": {
+          "platform_id": {
+            "$ref": "#/$defs/id"
+          },
+          "display_name": {
+            "$ref": "#/$defs/text"
+          },
+          "channels": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/channel"
+            }
+          }
+        }
+      }
+    },
+    "target_entity_id": {
+      "$ref": "#/$defs/id"
+    },
+    "competitor_entity_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "logged_in",
+        "history_cleared",
+        "web_search",
+        "region",
+        "device"
+      ],
+      "properties": {
+        "logged_in": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "history_cleared": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "web_search": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "region": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/text"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "device": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/text"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "description": "登记的采集环境；null 表示该项不作要求。"
+    },
+    "preregistration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "registered_at",
+        "registered_by",
+        "metrics",
+        "accuracy_basis",
+        "recommendation_success",
+        "crosscheck",
+        "sufficiency",
+        "statistics",
+        "recheck",
+        "target_sources",
+        "authority",
+        "exclusion_rules"
+      ],
+      "properties": {
+        "registered_at": {
+          "$ref": "#/$defs/utc_time"
+        },
+        "registered_by": {
+          "$ref": "#/$defs/text"
+        },
+        "metrics": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "metric_id",
+              "definition_version",
+              "role",
+              "threshold"
+            ],
+            "properties": {
+              "metric_id": {
+                "$ref": "#/$defs/id"
+              },
+              "definition_version": {
+                "$ref": "#/$defs/text"
+              },
+              "role": {
+                "enum": [
+                  "acceptance",
+                  "descriptive"
+                ]
+              },
+              "threshold": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "op",
+                      "value"
+                    ],
+                    "properties": {
+                      "op": {
+                        "enum": [
+                          ">=",
+                          ">",
+                          "<=",
+                          "<"
+                        ]
+                      },
+                      "value": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "role": {
+                      "const": "acceptance"
+                    }
+                  },
+                  "required": [
+                    "role"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "threshold": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "accuracy_basis": {
+          "enum": [
+            "verifiable",
+            "strict"
+          ]
+        },
+        "recommendation_success": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "criterion",
+            "top_n"
+          ],
+          "properties": {
+            "criterion": {
+              "enum": [
+                "recommended",
+                "top_n",
+                "mentioned"
+              ]
+            },
+            "top_n": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "criterion": {
+                    "const": "top_n"
+                  }
+                },
+                "required": [
+                  "criterion"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "top_n": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "else": {
+                "properties": {
+                  "top_n": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "crosscheck": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "formula",
+            "threshold",
+            "metric_id",
+            "channel_a",
+            "channel_b"
+          ],
+          "properties": {
+            "formula": {
+              "const": "symmetric_relative_difference"
+            },
+            "threshold": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 2
+            },
+            "metric_id": {
+              "$ref": "#/$defs/id"
+            },
+            "channel_a": {
+              "$ref": "#/$defs/channel"
+            },
+            "channel_b": {
+              "$ref": "#/$defs/channel"
+            }
+          }
+        },
+        "sufficiency": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "min_windows",
+            "min_valid_observations"
+          ],
+          "properties": {
+            "min_windows": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "min_valid_observations": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "statistics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "confidence_level",
+            "bootstrap_iterations",
+            "seed"
+          ],
+          "properties": {
+            "confidence_level": {
+              "type": "number",
+              "exclusiveMinimum": 0.5,
+              "exclusiveMaximum": 1
+            },
+            "bootstrap_iterations": {
+              "type": "integer",
+              "minimum": 100
+            },
+            "seed": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "recheck": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "fraction",
+            "seed"
+          ],
+          "properties": {
+            "fraction": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "seed": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "target_sources": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/hostname"
+          }
+        },
+        "authority": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "authoritative_tiers",
+            "domain_tiers"
+          ],
+          "properties": {
+            "authoritative_tiers": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/tier"
+              }
+            },
+            "domain_tiers": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "#/$defs/hostname"
+              },
+              "additionalProperties": {
+                "$ref": "#/$defs/tier"
+              }
+            }
+          }
+        },
+        "exclusion_rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "rule_id",
+              "description"
+            ],
+            "properties": {
+              "rule_id": {
+                "$ref": "#/$defs/id"
+              },
+              "description": {
+                "$ref": "#/$defs/text"
+              }
+            }
+          }
+        }
+      }
+    },
+    "disclosure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "statement",
+        "relationships",
+        "tool_operator",
+        "operator_is_provider"
+      ],
+      "properties": {
+        "statement": {
+          "$ref": "#/$defs/text"
+        },
+        "relationships": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "party",
+              "role",
+              "relationship"
+            ],
+            "properties": {
+              "party": {
+                "$ref": "#/$defs/text"
+              },
+              "role": {
+                "$ref": "#/$defs/text"
+              },
+              "relationship": {
+                "$ref": "#/$defs/text"
+              }
+            }
+          }
+        },
+        "tool_operator": {
+          "$ref": "#/$defs/text"
+        },
+        "operator_is_provider": {
+          "type": "boolean"
+        }
+      }
+    },
+    "synthetic": {
+      "type": "boolean"
+    },
+    "ext": {
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "utc_time": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "hostname": {
+      "type": "string",
+      "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$"
+    },
+    "channel": {
+      "enum": [
+        "api",
+        "manual",
+        "share_import",
+        "browser_assist",
+        "file_import"
+      ]
+    },
+    "tier": {
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ]
+    }
+  }
+}

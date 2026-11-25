@@ -1,0 +1,297 @@
+{
+  "contract": "judgment",
+  "valid": [
+    {
+      "schema_version": "1.0",
+      "judgment_id": "jdg-000001",
+      "project_id": "auto-demo",
+      "direction": "answer_to_facts",
+      "source": {
+        "type": "observation",
+        "id": "obs-000001"
+      },
+      "query_id": "Q001",
+      "claim_id": "clm-000001",
+      "fact_id": "F-S7-RANGE-CLTC",
+      "fact_version": 1,
+      "label": "supported",
+      "claim_type": "numeric",
+      "reason": "数值与事实库一致，测试工况相同（CLTC）。",
+      "as_of": "2026-10-08",
+      "judge": {
+        "type": "rule",
+        "id": "geo-facts-judge",
+        "version": "1.0"
+      },
+      "created_at": "2026-10-08T05:00:00Z",
+      "synthetic": true
+    },
+    {
+      "schema_version": "1.0",
+      "judgment_id": "jdg-000002",
+      "project_id": "auto-demo",
+      "direction": "facts_to_answer",
+      "source": {
+        "type": "observation",
+        "id": "obs-000001"
+      },
+      "query_id": "Q001",
+      "claim_id": null,
+      "fact_id": "F-S7-RANGE-CLTC",
+      "fact_version": 1,
+      "label": "missing",
+      "reason": "回答中未出现该核心事实。",
+      "as_of": "2026-10-08",
+      "judge": {
+        "type": "rule",
+        "id": "geo-facts-judge",
+        "version": "1.0"
+      },
+      "created_at": "2026-10-08T05:00:00Z"
+    },
+    {
+      "schema_version": "1.0",
+      "judgment_id": "jdg-000003",
+      "project_id": "auto-demo",
+      "direction": "answer_to_facts",
+      "source": {
+        "type": "observation",
+        "id": "obs-000001"
+      },
+      "query_id": "Q001",
+      "claim_id": "clm-000002",
+      "fact_id": null,
+      "fact_version": null,
+      "label": "unverifiable",
+      "reason": "事实库中没有对应条目，不等于错误。",
+      "as_of": "2026-10-08",
+      "judge": {
+        "type": "rule",
+        "id": "geo-facts-judge",
+        "version": "1.0"
+      },
+      "created_at": "2026-10-08T05:00:00Z"
+    }
+  ],
+  "invalid": [
+    {
+      "why": "回答→事实方向用了呈现率标签",
+      "expect": {
+        "path": "/label",
+        "keyword": "enum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "judgment_id": "jdg-000001",
+        "project_id": "auto-demo",
+        "direction": "answer_to_facts",
+        "source": {
+          "type": "observation",
+          "id": "obs-000001"
+        },
+        "query_id": "Q001",
+        "claim_id": "clm-000001",
+        "fact_id": "F-S7-RANGE-CLTC",
+        "fact_version": 1,
+        "label": "missing",
+        "claim_type": "numeric",
+        "reason": "数值与事实库一致，测试工况相同（CLTC）。",
+        "as_of": "2026-10-08",
+        "judge": {
+          "type": "rule",
+          "id": "geo-facts-judge",
+          "version": "1.0"
+        },
+        "created_at": "2026-10-08T05:00:00Z",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "判为矛盾却没有依据的事实版本",
+      "expect": {
+        "path": "/fact_version",
+        "keyword": "type"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "judgment_id": "jdg-000001",
+        "project_id": "auto-demo",
+        "direction": "answer_to_facts",
+        "source": {
+          "type": "observation",
+          "id": "obs-000001"
+        },
+        "query_id": "Q001",
+        "claim_id": "clm-000001",
+        "fact_id": "F-S7-RANGE-CLTC",
+        "fact_version": null,
+        "label": "contradicted",
+        "claim_type": "numeric",
+        "reason": "数值与事实库一致，测试工况相同（CLTC）。",
+        "as_of": "2026-10-08",
+        "judge": {
+          "type": "rule",
+          "id": "geo-facts-judge",
+          "version": "1.0"
+        },
+        "created_at": "2026-10-08T05:00:00Z",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "回答→事实方向缺少陈述编号",
+      "expect": {
+        "path": "/claim_id",
+        "keyword": "type"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "judgment_id": "jdg-000001",
+        "project_id": "auto-demo",
+        "direction": "answer_to_facts",
+        "source": {
+          "type": "observation",
+          "id": "obs-000001"
+        },
+        "query_id": "Q001",
+        "claim_id": null,
+        "fact_id": "F-S7-RANGE-CLTC",
+        "fact_version": 1,
+        "label": "supported",
+        "claim_type": "numeric",
+        "reason": "数值与事实库一致，测试工况相同（CLTC）。",
+        "as_of": "2026-10-08",
+        "judge": {
+          "type": "rule",
+          "id": "geo-facts-judge",
+          "version": "1.0"
+        },
+        "created_at": "2026-10-08T05:00:00Z",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "方向取值非法",
+      "expect": {
+        "path": "/direction",
+        "keyword": "enum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "judgment_id": "jdg-000001",
+        "project_id": "auto-demo",
+        "direction": "both",
+        "source": {
+          "type": "observation",
+          "id": "obs-000001"
+        },
+        "query_id": "Q001",
+        "claim_id": "clm-000001",
+        "fact_id": "F-S7-RANGE-CLTC",
+        "fact_version": 1,
+        "label": "supported",
+        "claim_type": "numeric",
+        "reason": "数值与事实库一致，测试工况相同（CLTC）。",
+        "as_of": "2026-10-08",
+        "judge": {
+          "type": "rule",
+          "id": "geo-facts-judge",
+          "version": "1.0"
+        },
+        "created_at": "2026-10-08T05:00:00Z",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "缺少判定者",
+      "expect": {
+        "path": "",
+        "keyword": "required"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "judgment_id": "jdg-000001",
+        "project_id": "auto-demo",
+        "direction": "answer_to_facts",
+        "source": {
+          "type": "observation",
+          "id": "obs-000001"
+        },
+        "query_id": "Q001",
+        "claim_id": "clm-000001",
+        "fact_id": "F-S7-RANGE-CLTC",
+        "fact_version": 1,
+        "label": "supported",
+        "claim_type": "numeric",
+        "reason": "数值与事实库一致，测试工况相同（CLTC）。",
+        "as_of": "2026-10-08",
+        "created_at": "2026-10-08T05:00:00Z",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "判定理由为空",
+      "expect": {
+        "path": "/reason",
+        "keyword": "minLength"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "judgment_id": "jdg-000001",
+        "project_id": "auto-demo",
+        "direction": "answer_to_facts",
+        "source": {
+          "type": "observation",
+          "id": "obs-000001"
+        },
+        "query_id": "Q001",
+        "claim_id": "clm-000001",
+        "fact_id": "F-S7-RANGE-CLTC",
+        "fact_version": 1,
+        "label": "supported",
+        "claim_type": "numeric",
+        "reason": "",
+        "as_of": "2026-10-08",
+        "judge": {
+          "type": "rule",
+          "id": "geo-facts-judge",
+          "version": "1.0"
+        },
+        "created_at": "2026-10-08T05:00:00Z",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "事实→回答方向用了准确率标签",
+      "expect": {
+        "path": "/label",
+        "keyword": "enum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "judgment_id": "jdg-000001",
+        "project_id": "auto-demo",
+        "direction": "facts_to_answer",
+        "source": {
+          "type": "observation",
+          "id": "obs-000001"
+        },
+        "query_id": "Q001",
+        "claim_id": "clm-000001",
+        "fact_id": "F-S7-RANGE-CLTC",
+        "fact_version": 1,
+        "label": "supported",
+        "claim_type": "numeric",
+        "reason": "数值与事实库一致，测试工况相同（CLTC）。",
+        "as_of": "2026-10-08",
+        "judge": {
+          "type": "rule",
+          "id": "geo-facts-judge",
+          "version": "1.0"
+        },
+        "created_at": "2026-10-08T05:00:00Z",
+        "synthetic": true
+      }
+    }
+  ]
+}

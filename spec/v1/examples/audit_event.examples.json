@@ -1,0 +1,230 @@
+{
+  "contract": "audit_event",
+  "valid": [
+    {
+      "schema_version": "1.0",
+      "event_id": "evt-000001",
+      "project_id": "auto-demo",
+      "actor": "甲方项目负责人（虚构）",
+      "occurred_at": "2026-10-02T03:00:00Z",
+      "action": "seal",
+      "target": {
+        "type": "prompt_set",
+        "id": "auto-demo-prompts@1"
+      },
+      "reason": "题库评审通过，首次封存",
+      "before_hash": null,
+      "after_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+      "previous_event_hash": null,
+      "event_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+      "synthetic": true
+    },
+    {
+      "schema_version": "1.0",
+      "event_id": "evt-000002",
+      "project_id": "auto-demo",
+      "actor": "数据管理员（虚构）",
+      "occurred_at": "2026-10-09T03:00:00Z",
+      "action": "exclude",
+      "target": {
+        "type": "observation",
+        "id": "batch"
+      },
+      "reason": "同一 trace_id 重复导入",
+      "before_hash": null,
+      "after_hash": null,
+      "previous_event_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+      "event_hash": "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d",
+      "details": {
+        "rule_id": "EX-DUP",
+        "count": 1,
+        "observation_ids": [
+          "obs-000009"
+        ]
+      }
+    }
+  ],
+  "invalid": [
+    {
+      "why": "没有写变更理由",
+      "expect": {
+        "path": "/reason",
+        "keyword": "minLength"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "event_id": "evt-000001",
+        "project_id": "auto-demo",
+        "actor": "甲方项目负责人（虚构）",
+        "occurred_at": "2026-10-02T03:00:00Z",
+        "action": "seal",
+        "target": {
+          "type": "prompt_set",
+          "id": "auto-demo-prompts@1"
+        },
+        "reason": "",
+        "before_hash": null,
+        "after_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "previous_event_hash": null,
+        "event_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "缺少变更人",
+      "expect": {
+        "path": "",
+        "keyword": "required"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "event_id": "evt-000001",
+        "project_id": "auto-demo",
+        "occurred_at": "2026-10-02T03:00:00Z",
+        "action": "seal",
+        "target": {
+          "type": "prompt_set",
+          "id": "auto-demo-prompts@1"
+        },
+        "reason": "题库评审通过，首次封存",
+        "before_hash": null,
+        "after_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "previous_event_hash": null,
+        "event_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "动作类型非法",
+      "expect": {
+        "path": "/action",
+        "keyword": "enum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "event_id": "evt-000001",
+        "project_id": "auto-demo",
+        "actor": "甲方项目负责人（虚构）",
+        "occurred_at": "2026-10-02T03:00:00Z",
+        "action": "delete",
+        "target": {
+          "type": "prompt_set",
+          "id": "auto-demo-prompts@1"
+        },
+        "reason": "题库评审通过，首次封存",
+        "before_hash": null,
+        "after_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "previous_event_hash": null,
+        "event_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "剔除事件没有规则和数量",
+      "expect": {
+        "path": "",
+        "keyword": "required"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "event_id": "evt-000001",
+        "project_id": "auto-demo",
+        "actor": "甲方项目负责人（虚构）",
+        "occurred_at": "2026-10-02T03:00:00Z",
+        "action": "exclude",
+        "target": {
+          "type": "prompt_set",
+          "id": "auto-demo-prompts@1"
+        },
+        "reason": "题库评审通过，首次封存",
+        "before_hash": null,
+        "after_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "previous_event_hash": null,
+        "event_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "变更后哈希不是 SHA-256",
+      "expect": {
+        "path": "/after_hash",
+        "keyword": "anyOf"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "event_id": "evt-000001",
+        "project_id": "auto-demo",
+        "actor": "甲方项目负责人（虚构）",
+        "occurred_at": "2026-10-02T03:00:00Z",
+        "action": "seal",
+        "target": {
+          "type": "prompt_set",
+          "id": "auto-demo-prompts@1"
+        },
+        "reason": "题库评审通过，首次封存",
+        "before_hash": null,
+        "after_hash": "xyz",
+        "previous_event_hash": null,
+        "event_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "时间不是 UTC",
+      "expect": {
+        "path": "/occurred_at",
+        "keyword": "pattern"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "event_id": "evt-000001",
+        "project_id": "auto-demo",
+        "actor": "甲方项目负责人（虚构）",
+        "occurred_at": "2026-10-02T11:00:00",
+        "action": "seal",
+        "target": {
+          "type": "prompt_set",
+          "id": "auto-demo-prompts@1"
+        },
+        "reason": "题库评审通过，首次封存",
+        "before_hash": null,
+        "after_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "previous_event_hash": null,
+        "event_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "剔除事件的数量为 0",
+      "expect": {
+        "path": "/details/count",
+        "keyword": "minimum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "event_id": "evt-000001",
+        "project_id": "auto-demo",
+        "actor": "甲方项目负责人（虚构）",
+        "occurred_at": "2026-10-02T03:00:00Z",
+        "action": "exclude",
+        "target": {
+          "type": "prompt_set",
+          "id": "auto-demo-prompts@1"
+        },
+        "reason": "题库评审通过，首次封存",
+        "before_hash": null,
+        "after_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "previous_event_hash": null,
+        "event_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+        "synthetic": true,
+        "details": {
+          "rule_id": "EX-DUP",
+          "count": 0,
+          "observation_ids": [
+            "obs-1"
+          ]
+        }
+      }
+    }
+  ]
+}

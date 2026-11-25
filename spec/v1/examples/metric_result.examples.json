@@ -1,0 +1,497 @@
+{
+  "contract": "metric_result",
+  "valid": [
+    {
+      "schema_version": "1.0",
+      "metric_id": "mention_rate",
+      "project_id": "auto-demo",
+      "scope": {
+        "platform": "engine-a",
+        "channel": null,
+        "window_id": null,
+        "date": null,
+        "entity_id": "brand-lanxu"
+      },
+      "value": 0.8,
+      "null_reason": null,
+      "numerator": 24,
+      "denominator": 30,
+      "excluded": {
+        "count": 2,
+        "rules": [
+          {
+            "rule": "status=invalid:timeout",
+            "count": 2
+          }
+        ]
+      },
+      "interval": {
+        "method": "cluster_bootstrap",
+        "level": 0.95,
+        "low": 0.63,
+        "high": 0.93
+      },
+      "clustering": {
+        "clusters": 3,
+        "icc": 0.2,
+        "design_effect": 2.8,
+        "effective_n": 10.7
+      },
+      "sufficiency": {
+        "sufficient": true,
+        "windows": 3,
+        "valid_observations": 30,
+        "reasons": []
+      },
+      "definition_version": "1.0",
+      "preregistered": true,
+      "role": "acceptance",
+      "drilldown": {
+        "unit": "observation",
+        "numerator_ids_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "denominator_ids_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e"
+      },
+      "synthetic": true
+    },
+    {
+      "schema_version": "1.0",
+      "metric_id": "top1_rate",
+      "project_id": "auto-demo",
+      "scope": {
+        "platform": null,
+        "channel": null,
+        "window_id": null,
+        "date": null,
+        "entity_id": "brand-lanxu"
+      },
+      "value": null,
+      "null_reason": "没有可排序的观测，分母为 0",
+      "numerator": 0,
+      "denominator": 0,
+      "excluded": {
+        "count": 0,
+        "rules": []
+      },
+      "interval": null,
+      "sufficiency": {
+        "sufficient": false,
+        "windows": 1,
+        "valid_observations": 0,
+        "reasons": [
+          "时间窗口不足 3 个",
+          "有效观测不足 30 次"
+        ]
+      },
+      "definition_version": "1.0",
+      "preregistered": false,
+      "role": "post_hoc",
+      "drilldown": {
+        "unit": "observation",
+        "numerator_ids_hash": null,
+        "denominator_ids_hash": null,
+        "numerator_ids": [],
+        "denominator_ids": []
+      }
+    }
+  ],
+  "invalid": [
+    {
+      "why": "分母为 0 却没有给原因",
+      "expect": {
+        "path": "/null_reason",
+        "keyword": "type"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "metric_id": "mention_rate",
+        "project_id": "auto-demo",
+        "scope": {
+          "platform": "engine-a",
+          "channel": null,
+          "window_id": null,
+          "date": null,
+          "entity_id": "brand-lanxu"
+        },
+        "value": null,
+        "null_reason": null,
+        "numerator": 24,
+        "denominator": 30,
+        "excluded": {
+          "count": 2,
+          "rules": [
+            {
+              "rule": "status=invalid:timeout",
+              "count": 2
+            }
+          ]
+        },
+        "interval": {
+          "method": "cluster_bootstrap",
+          "level": 0.95,
+          "low": 0.63,
+          "high": 0.93
+        },
+        "clustering": {
+          "clusters": 3,
+          "icc": 0.2,
+          "design_effect": 2.8,
+          "effective_n": 10.7
+        },
+        "sufficiency": {
+          "sufficient": true,
+          "windows": 3,
+          "valid_observations": 30,
+          "reasons": []
+        },
+        "definition_version": "1.0",
+        "preregistered": true,
+        "role": "acceptance",
+        "drilldown": {
+          "unit": "observation",
+          "numerator_ids_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+          "denominator_ids_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "有值却同时写了 null 原因",
+      "expect": {
+        "path": "/null_reason",
+        "keyword": "type"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "metric_id": "mention_rate",
+        "project_id": "auto-demo",
+        "scope": {
+          "platform": "engine-a",
+          "channel": null,
+          "window_id": null,
+          "date": null,
+          "entity_id": "brand-lanxu"
+        },
+        "value": 0.8,
+        "null_reason": "分母为 0",
+        "numerator": 24,
+        "denominator": 30,
+        "excluded": {
+          "count": 2,
+          "rules": [
+            {
+              "rule": "status=invalid:timeout",
+              "count": 2
+            }
+          ]
+        },
+        "interval": {
+          "method": "cluster_bootstrap",
+          "level": 0.95,
+          "low": 0.63,
+          "high": 0.93
+        },
+        "clustering": {
+          "clusters": 3,
+          "icc": 0.2,
+          "design_effect": 2.8,
+          "effective_n": 10.7
+        },
+        "sufficiency": {
+          "sufficient": true,
+          "windows": 3,
+          "valid_observations": 30,
+          "reasons": []
+        },
+        "definition_version": "1.0",
+        "preregistered": true,
+        "role": "acceptance",
+        "drilldown": {
+          "unit": "observation",
+          "numerator_ids_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+          "denominator_ids_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "缺少剔除数",
+      "expect": {
+        "path": "",
+        "keyword": "required"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "metric_id": "mention_rate",
+        "project_id": "auto-demo",
+        "scope": {
+          "platform": "engine-a",
+          "channel": null,
+          "window_id": null,
+          "date": null,
+          "entity_id": "brand-lanxu"
+        },
+        "value": 0.8,
+        "null_reason": null,
+        "numerator": 24,
+        "denominator": 30,
+        "interval": {
+          "method": "cluster_bootstrap",
+          "level": 0.95,
+          "low": 0.63,
+          "high": 0.93
+        },
+        "clustering": {
+          "clusters": 3,
+          "icc": 0.2,
+          "design_effect": 2.8,
+          "effective_n": 10.7
+        },
+        "sufficiency": {
+          "sufficient": true,
+          "windows": 3,
+          "valid_observations": 30,
+          "reasons": []
+        },
+        "definition_version": "1.0",
+        "preregistered": true,
+        "role": "acceptance",
+        "drilldown": {
+          "unit": "observation",
+          "numerator_ids_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+          "denominator_ids_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "事后指标被标成验收指标",
+      "expect": {
+        "path": "/role",
+        "keyword": "const"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "metric_id": "mention_rate",
+        "project_id": "auto-demo",
+        "scope": {
+          "platform": "engine-a",
+          "channel": null,
+          "window_id": null,
+          "date": null,
+          "entity_id": "brand-lanxu"
+        },
+        "value": 0.8,
+        "null_reason": null,
+        "numerator": 24,
+        "denominator": 30,
+        "excluded": {
+          "count": 2,
+          "rules": [
+            {
+              "rule": "status=invalid:timeout",
+              "count": 2
+            }
+          ]
+        },
+        "interval": {
+          "method": "cluster_bootstrap",
+          "level": 0.95,
+          "low": 0.63,
+          "high": 0.93
+        },
+        "clustering": {
+          "clusters": 3,
+          "icc": 0.2,
+          "design_effect": 2.8,
+          "effective_n": 10.7
+        },
+        "sufficiency": {
+          "sufficient": true,
+          "windows": 3,
+          "valid_observations": 30,
+          "reasons": []
+        },
+        "definition_version": "1.0",
+        "preregistered": false,
+        "role": "acceptance",
+        "drilldown": {
+          "unit": "observation",
+          "numerator_ids_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+          "denominator_ids_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "区间方法不在登记范围",
+      "expect": {
+        "path": "/interval",
+        "keyword": "anyOf"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "metric_id": "mention_rate",
+        "project_id": "auto-demo",
+        "scope": {
+          "platform": "engine-a",
+          "channel": null,
+          "window_id": null,
+          "date": null,
+          "entity_id": "brand-lanxu"
+        },
+        "value": 0.8,
+        "null_reason": null,
+        "numerator": 24,
+        "denominator": 30,
+        "excluded": {
+          "count": 2,
+          "rules": [
+            {
+              "rule": "status=invalid:timeout",
+              "count": 2
+            }
+          ]
+        },
+        "interval": {
+          "method": "normal",
+          "level": 0.95,
+          "low": 0.63,
+          "high": 0.93
+        },
+        "clustering": {
+          "clusters": 3,
+          "icc": 0.2,
+          "design_effect": 2.8,
+          "effective_n": 10.7
+        },
+        "sufficiency": {
+          "sufficient": true,
+          "windows": 3,
+          "valid_observations": 30,
+          "reasons": []
+        },
+        "definition_version": "1.0",
+        "preregistered": true,
+        "role": "acceptance",
+        "drilldown": {
+          "unit": "observation",
+          "numerator_ids_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+          "denominator_ids_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "缺少样本充分性",
+      "expect": {
+        "path": "",
+        "keyword": "required"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "metric_id": "mention_rate",
+        "project_id": "auto-demo",
+        "scope": {
+          "platform": "engine-a",
+          "channel": null,
+          "window_id": null,
+          "date": null,
+          "entity_id": "brand-lanxu"
+        },
+        "value": 0.8,
+        "null_reason": null,
+        "numerator": 24,
+        "denominator": 30,
+        "excluded": {
+          "count": 2,
+          "rules": [
+            {
+              "rule": "status=invalid:timeout",
+              "count": 2
+            }
+          ]
+        },
+        "interval": {
+          "method": "cluster_bootstrap",
+          "level": 0.95,
+          "low": 0.63,
+          "high": 0.93
+        },
+        "clustering": {
+          "clusters": 3,
+          "icc": 0.2,
+          "design_effect": 2.8,
+          "effective_n": 10.7
+        },
+        "definition_version": "1.0",
+        "preregistered": true,
+        "role": "acceptance",
+        "drilldown": {
+          "unit": "observation",
+          "numerator_ids_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+          "denominator_ids_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "剔除数为负",
+      "expect": {
+        "path": "/excluded/count",
+        "keyword": "minimum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "metric_id": "mention_rate",
+        "project_id": "auto-demo",
+        "scope": {
+          "platform": "engine-a",
+          "channel": null,
+          "window_id": null,
+          "date": null,
+          "entity_id": "brand-lanxu"
+        },
+        "value": 0.8,
+        "null_reason": null,
+        "numerator": 24,
+        "denominator": 30,
+        "excluded": {
+          "count": -1,
+          "rules": [
+            {
+              "rule": "status=invalid:timeout",
+              "count": 2
+            }
+          ]
+        },
+        "interval": {
+          "method": "cluster_bootstrap",
+          "level": 0.95,
+          "low": 0.63,
+          "high": 0.93
+        },
+        "clustering": {
+          "clusters": 3,
+          "icc": 0.2,
+          "design_effect": 2.8,
+          "effective_n": 10.7
+        },
+        "sufficiency": {
+          "sufficient": true,
+          "windows": 3,
+          "valid_observations": 30,
+          "reasons": []
+        },
+        "definition_version": "1.0",
+        "preregistered": true,
+        "role": "acceptance",
+        "drilldown": {
+          "unit": "observation",
+          "numerator_ids_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+          "denominator_ids_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e"
+        },
+        "synthetic": true
+      }
+    }
+  ]
+}

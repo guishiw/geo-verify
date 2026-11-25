@@ -1,0 +1,240 @@
+{
+  "contract": "claim",
+  "valid": [
+    {
+      "schema_version": "1.0",
+      "claim_id": "clm-000001",
+      "project_id": "auto-demo",
+      "source": {
+        "type": "observation",
+        "id": "obs-000001"
+      },
+      "text": "澜序 S7 的 CLTC 续航为 620 公里",
+      "span": {
+        "start": 26,
+        "end": 48
+      },
+      "entity_id": "product-lanxu-s7",
+      "attribute": "续航里程",
+      "value": 620,
+      "unit": "km",
+      "conditions": {
+        "test_cycle": "CLTC"
+      },
+      "claim_type": "numeric",
+      "extractor": {
+        "type": "rule",
+        "id": "geo-facts-rules",
+        "version": "1.0"
+      },
+      "synthetic": true
+    }
+  ],
+  "invalid": [
+    {
+      "why": "缺少原文位置",
+      "expect": {
+        "path": "",
+        "keyword": "required"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "claim_id": "clm-000001",
+        "project_id": "auto-demo",
+        "source": {
+          "type": "observation",
+          "id": "obs-000001"
+        },
+        "text": "澜序 S7 的 CLTC 续航为 620 公里",
+        "entity_id": "product-lanxu-s7",
+        "attribute": "续航里程",
+        "value": 620,
+        "unit": "km",
+        "conditions": {
+          "test_cycle": "CLTC"
+        },
+        "claim_type": "numeric",
+        "extractor": {
+          "type": "rule",
+          "id": "geo-facts-rules",
+          "version": "1.0"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "起始位置为负数",
+      "expect": {
+        "path": "/span/start",
+        "keyword": "minimum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "claim_id": "clm-000001",
+        "project_id": "auto-demo",
+        "source": {
+          "type": "observation",
+          "id": "obs-000001"
+        },
+        "text": "澜序 S7 的 CLTC 续航为 620 公里",
+        "span": {
+          "start": -1,
+          "end": 48
+        },
+        "entity_id": "product-lanxu-s7",
+        "attribute": "续航里程",
+        "value": 620,
+        "unit": "km",
+        "conditions": {
+          "test_cycle": "CLTC"
+        },
+        "claim_type": "numeric",
+        "extractor": {
+          "type": "rule",
+          "id": "geo-facts-rules",
+          "version": "1.0"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "来源类型非法",
+      "expect": {
+        "path": "/source/type",
+        "keyword": "enum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "claim_id": "clm-000001",
+        "project_id": "auto-demo",
+        "source": {
+          "type": "webpage",
+          "id": "obs-000001"
+        },
+        "text": "澜序 S7 的 CLTC 续航为 620 公里",
+        "span": {
+          "start": 26,
+          "end": 48
+        },
+        "entity_id": "product-lanxu-s7",
+        "attribute": "续航里程",
+        "value": 620,
+        "unit": "km",
+        "conditions": {
+          "test_cycle": "CLTC"
+        },
+        "claim_type": "numeric",
+        "extractor": {
+          "type": "rule",
+          "id": "geo-facts-rules",
+          "version": "1.0"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "陈述类型非法",
+      "expect": {
+        "path": "/claim_type",
+        "keyword": "enum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "claim_id": "clm-000001",
+        "project_id": "auto-demo",
+        "source": {
+          "type": "observation",
+          "id": "obs-000001"
+        },
+        "text": "澜序 S7 的 CLTC 续航为 620 公里",
+        "span": {
+          "start": 26,
+          "end": 48
+        },
+        "entity_id": "product-lanxu-s7",
+        "attribute": "续航里程",
+        "value": 620,
+        "unit": "km",
+        "conditions": {
+          "test_cycle": "CLTC"
+        },
+        "claim_type": "opinion",
+        "extractor": {
+          "type": "rule",
+          "id": "geo-facts-rules",
+          "version": "1.0"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "陈述文本为空",
+      "expect": {
+        "path": "/text",
+        "keyword": "minLength"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "claim_id": "clm-000001",
+        "project_id": "auto-demo",
+        "source": {
+          "type": "observation",
+          "id": "obs-000001"
+        },
+        "text": "",
+        "span": {
+          "start": 26,
+          "end": 48
+        },
+        "entity_id": "product-lanxu-s7",
+        "attribute": "续航里程",
+        "value": 620,
+        "unit": "km",
+        "conditions": {
+          "test_cycle": "CLTC"
+        },
+        "claim_type": "numeric",
+        "extractor": {
+          "type": "rule",
+          "id": "geo-facts-rules",
+          "version": "1.0"
+        },
+        "synthetic": true
+      }
+    },
+    {
+      "why": "拆解器缺少版本",
+      "expect": {
+        "path": "/extractor",
+        "keyword": "required"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "claim_id": "clm-000001",
+        "project_id": "auto-demo",
+        "source": {
+          "type": "observation",
+          "id": "obs-000001"
+        },
+        "text": "澜序 S7 的 CLTC 续航为 620 公里",
+        "span": {
+          "start": 26,
+          "end": 48
+        },
+        "entity_id": "product-lanxu-s7",
+        "attribute": "续航里程",
+        "value": 620,
+        "unit": "km",
+        "conditions": {
+          "test_cycle": "CLTC"
+        },
+        "claim_type": "numeric",
+        "extractor": {
+          "type": "rule",
+          "id": "geo-facts-rules"
+        },
+        "synthetic": true
+      }
+    }
+  ]
+}

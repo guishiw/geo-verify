@@ -1,0 +1,350 @@
+{
+  "contract": "manifest",
+  "valid": [
+    {
+      "schema_version": "1.0",
+      "manifest_id": "auto-demo-manifest-0001",
+      "project_id": "auto-demo",
+      "sequence": 1,
+      "created_at": "2026-10-09T01:00:00Z",
+      "previous_manifest_hash": null,
+      "files": [
+        {
+          "path": "observations.jsonl",
+          "sha256": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+          "bytes": 20480,
+          "role": "raw",
+          "records": 12,
+          "line_index": "evidence/index/observations.jsonl.lines"
+        },
+        {
+          "path": "project.json",
+          "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+          "bytes": 2048,
+          "role": "config",
+          "records": null,
+          "line_index": null
+        }
+      ],
+      "tool": {
+        "name": "geo-verify",
+        "version": "0.1.0"
+      },
+      "code_version": "0.1.0",
+      "lock_hash": "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d",
+      "seed": 20261001,
+      "definitions": {
+        "mention_rate": "1.0"
+      },
+      "timestamp_token": null,
+      "manifest_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+      "synthetic": true
+    }
+  ],
+  "invalid": [
+    {
+      "why": "首个清单却带有前一清单哈希",
+      "expect": {
+        "path": "/previous_manifest_hash",
+        "keyword": "type"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "manifest_id": "auto-demo-manifest-0001",
+        "project_id": "auto-demo",
+        "sequence": 1,
+        "created_at": "2026-10-09T01:00:00Z",
+        "previous_manifest_hash": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+        "files": [
+          {
+            "path": "observations.jsonl",
+            "sha256": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+            "bytes": 20480,
+            "role": "raw",
+            "records": 12,
+            "line_index": "evidence/index/observations.jsonl.lines"
+          },
+          {
+            "path": "project.json",
+            "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+            "bytes": 2048,
+            "role": "config",
+            "records": null,
+            "line_index": null
+          }
+        ],
+        "tool": {
+          "name": "geo-verify",
+          "version": "0.1.0"
+        },
+        "code_version": "0.1.0",
+        "lock_hash": "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d",
+        "seed": 20261001,
+        "definitions": {
+          "mention_rate": "1.0"
+        },
+        "timestamp_token": null,
+        "manifest_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "第 2 个清单缺少前一清单哈希",
+      "expect": {
+        "path": "/previous_manifest_hash",
+        "keyword": "pattern"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "manifest_id": "auto-demo-manifest-0001",
+        "project_id": "auto-demo",
+        "sequence": 2,
+        "created_at": "2026-10-09T01:00:00Z",
+        "previous_manifest_hash": "",
+        "files": [
+          {
+            "path": "observations.jsonl",
+            "sha256": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+            "bytes": 20480,
+            "role": "raw",
+            "records": 12,
+            "line_index": "evidence/index/observations.jsonl.lines"
+          },
+          {
+            "path": "project.json",
+            "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+            "bytes": 2048,
+            "role": "config",
+            "records": null,
+            "line_index": null
+          }
+        ],
+        "tool": {
+          "name": "geo-verify",
+          "version": "0.1.0"
+        },
+        "code_version": "0.1.0",
+        "lock_hash": "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d",
+        "seed": 20261001,
+        "definitions": {
+          "mention_rate": "1.0"
+        },
+        "timestamp_token": null,
+        "manifest_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "文件清单为空",
+      "expect": {
+        "path": "/files",
+        "keyword": "minItems"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "manifest_id": "auto-demo-manifest-0001",
+        "project_id": "auto-demo",
+        "sequence": 1,
+        "created_at": "2026-10-09T01:00:00Z",
+        "previous_manifest_hash": null,
+        "files": [],
+        "tool": {
+          "name": "geo-verify",
+          "version": "0.1.0"
+        },
+        "code_version": "0.1.0",
+        "lock_hash": "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d",
+        "seed": 20261001,
+        "definitions": {
+          "mention_rate": "1.0"
+        },
+        "timestamp_token": null,
+        "manifest_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "文件哈希不是 SHA-256",
+      "expect": {
+        "path": "/files/0/sha256",
+        "keyword": "pattern"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "manifest_id": "auto-demo-manifest-0001",
+        "project_id": "auto-demo",
+        "sequence": 1,
+        "created_at": "2026-10-09T01:00:00Z",
+        "previous_manifest_hash": null,
+        "files": [
+          {
+            "path": "observations.jsonl",
+            "sha256": "deadbeef",
+            "bytes": 20480,
+            "role": "raw",
+            "records": 12,
+            "line_index": "evidence/index/observations.jsonl.lines"
+          },
+          {
+            "path": "project.json",
+            "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+            "bytes": 2048,
+            "role": "config",
+            "records": null,
+            "line_index": null
+          }
+        ],
+        "tool": {
+          "name": "geo-verify",
+          "version": "0.1.0"
+        },
+        "code_version": "0.1.0",
+        "lock_hash": "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d",
+        "seed": 20261001,
+        "definitions": {
+          "mention_rate": "1.0"
+        },
+        "timestamp_token": null,
+        "manifest_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "文件路径是绝对路径",
+      "expect": {
+        "path": "/files/1/path",
+        "keyword": "pattern"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "manifest_id": "auto-demo-manifest-0001",
+        "project_id": "auto-demo",
+        "sequence": 1,
+        "created_at": "2026-10-09T01:00:00Z",
+        "previous_manifest_hash": null,
+        "files": [
+          {
+            "path": "observations.jsonl",
+            "sha256": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+            "bytes": 20480,
+            "role": "raw",
+            "records": 12,
+            "line_index": "evidence/index/observations.jsonl.lines"
+          },
+          {
+            "path": "/etc/passwd",
+            "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+            "bytes": 2048,
+            "role": "config",
+            "records": null,
+            "line_index": null
+          }
+        ],
+        "tool": {
+          "name": "geo-verify",
+          "version": "0.1.0"
+        },
+        "code_version": "0.1.0",
+        "lock_hash": "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d",
+        "seed": 20261001,
+        "definitions": {
+          "mention_rate": "1.0"
+        },
+        "timestamp_token": null,
+        "manifest_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+        "synthetic": true
+      }
+    },
+    {
+      "why": "缺少清单自身哈希",
+      "expect": {
+        "path": "",
+        "keyword": "required"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "manifest_id": "auto-demo-manifest-0001",
+        "project_id": "auto-demo",
+        "sequence": 1,
+        "created_at": "2026-10-09T01:00:00Z",
+        "previous_manifest_hash": null,
+        "files": [
+          {
+            "path": "observations.jsonl",
+            "sha256": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+            "bytes": 20480,
+            "role": "raw",
+            "records": 12,
+            "line_index": "evidence/index/observations.jsonl.lines"
+          },
+          {
+            "path": "project.json",
+            "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+            "bytes": 2048,
+            "role": "config",
+            "records": null,
+            "line_index": null
+          }
+        ],
+        "tool": {
+          "name": "geo-verify",
+          "version": "0.1.0"
+        },
+        "code_version": "0.1.0",
+        "lock_hash": "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d",
+        "seed": 20261001,
+        "definitions": {
+          "mention_rate": "1.0"
+        },
+        "timestamp_token": null,
+        "synthetic": true
+      }
+    },
+    {
+      "why": "文件角色非法",
+      "expect": {
+        "path": "/files/0/role",
+        "keyword": "enum"
+      },
+      "instance": {
+        "schema_version": "1.0",
+        "manifest_id": "auto-demo-manifest-0001",
+        "project_id": "auto-demo",
+        "sequence": 1,
+        "created_at": "2026-10-09T01:00:00Z",
+        "previous_manifest_hash": null,
+        "files": [
+          {
+            "path": "observations.jsonl",
+            "sha256": "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f",
+            "bytes": 20480,
+            "role": "secret",
+            "records": 12,
+            "line_index": "evidence/index/observations.jsonl.lines"
+          },
+          {
+            "path": "project.json",
+            "sha256": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+            "bytes": 2048,
+            "role": "config",
+            "records": null,
+            "line_index": null
+          }
+        ],
+        "tool": {
+          "name": "geo-verify",
+          "version": "0.1.0"
+        },
+        "code_version": "0.1.0",
+        "lock_hash": "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d",
+        "seed": 20261001,
+        "definitions": {
+          "mention_rate": "1.0"
+        },
+        "timestamp_token": null,
+        "manifest_hash": "2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e",
+        "synthetic": true
+      }
+    }
+  ]
+}

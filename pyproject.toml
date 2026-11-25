@@ -84,4 +84,4 @@ exclude_also = ["if TYPE_CHECKING:", "raise NotImplementedError", "@overload"]
 # 模块落地时逐个加入；最终必须包含 metrics、stats、seal、evidence、crosscheck。
 [tool.geo.coverage]
 minimum = 90
-modules = ["canon", "jsonl"]
+modules = ["spec", "canon", "jsonl"]
