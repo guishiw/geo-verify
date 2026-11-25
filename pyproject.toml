@@ -1,0 +1,87 @@
+[project]
+name = "geo-evidence-verify"
+version = "0.1.0"
+description = "GEO 验收预检工具：题库封存、采集、指标、统计与证据包。只给预检结论，不构成独立第三方验证。"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "geo-verify contributors" }]
+dependencies = [
+    "jsonschema>=4.23",
+    "rfc8785>=0.1.4",
+    "numpy>=2.3",
+    "httpx>=0.28",
+]
+
+[project.scripts]
+geo-verify = "geo_verify.cli:main"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14",
+    "mypy>=1.18",
+    "pytest>=8.4",
+    "pytest-cov>=7.0",
+    "hypothesis>=6.140",
+    "types-jsonschema>=4.23",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/geo_verify"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"spec" = "geo_verify/_spec"
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "spec", "tests", "tools", "docs", "examples", "Makefile", "README.md", "LICENSE", "CHANGELOG.md"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "C4", "PT", "RUF", "T20"]
+ignore = [
+    "E501",    # 行宽交给 formatter
+    "RUF001",  # 中文全角标点属于正常文本
+    "RUF002",
+    "RUF003",
+    "SIM108",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["T20"]
+"perf/**" = ["T20"]
+"tools/**" = ["T20"]
+"examples/**" = ["T20"]
+"src/geo_verify/cli.py" = ["T20"]
+
+[tool.mypy]
+files = ["src"]
+strict = true
+python_version = "3.12"
+warn_unreachable = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers --strict-config -p no:cacheprovider --cov=geo_verify --cov-branch --cov-report=term:skip-covered --cov-report=json:.coverage.json"
+xfail_strict = true
+filterwarnings = ["error"]
+
+[tool.coverage.run]
+source = ["geo_verify"]
+branch = true
+
+[tool.coverage.report]
+exclude_also = ["if TYPE_CHECKING:", "raise NotImplementedError", "@overload"]
+
+# 本仓库自定义：这些模块的行覆盖与分支覆盖都必须 >= 90%（见 tools/check_coverage.py）。
+# 模块落地时逐个加入；最终必须包含 metrics、stats、seal、evidence、crosscheck。
+[tool.geo.coverage]
+minimum = 90
+modules = ["canon", "jsonl"]
