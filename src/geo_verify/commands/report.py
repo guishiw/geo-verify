@@ -10,11 +10,14 @@ from geo_verify.audit import resolve_now
 from geo_verify.cli import CommandResult, SubParsers, add_command
 from geo_verify.errors import EXIT_CHECK_FAILED, EXIT_INSUFFICIENT, EXIT_OK, InputError
 from geo_verify.jsonl import write_json
+from geo_verify.report import csvsafe
 from geo_verify.report.document import build_report
-from geo_verify.report.inputs import load_inputs
+from geo_verify.report.html import render_html
+from geo_verify.report.inputs import Inputs, load_inputs
+from geo_verify.report.observations import COLUMNS, observation_rows
 
-FORMATS: tuple[str, ...] = ("json",)
-FILE_NAMES = {"json": "report.json"}
+FORMATS: tuple[str, ...] = ("json", "html", "csv")
+FILE_NAMES = {"json": "report.json", "html": "report.html", "csv": "observations.csv"}
 EXIT_CODES = {
     "pass": EXIT_OK,
     "conditional_pass": EXIT_OK,
@@ -55,6 +58,16 @@ def _text(report: dict[str, Any], outputs: dict[str, str]) -> str:
     return "\n".join(lines)
 
 
+def _write(name: str, target: Path, report: dict[str, Any], inputs: Inputs) -> None:
+    if name == "json":
+        write_json(target, report)
+    elif name == "html":
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(render_html(report), encoding="utf-8", newline="\n")
+    else:
+        csvsafe.write_csv(target, COLUMNS, observation_rows(inputs))
+
+
 def run(args: argparse.Namespace) -> CommandResult:
     formats = parse_formats(args.formats)
     generated_at = None if args.now is None else resolve_now(args.now)
@@ -65,7 +78,7 @@ def run(args: argparse.Namespace) -> CommandResult:
     outputs: dict[str, str] = {}
     for name in formats:
         target = out_dir / FILE_NAMES[name]
-        write_json(target, report)
+        _write(name, target, report, inputs)
         outputs[name] = str(target) if args.out_dir else f"out/{FILE_NAMES[name]}"
     data = {**report, "outputs": outputs}
     exit_code = EXIT_CODES[report["verdict"]["code"]]

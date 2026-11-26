@@ -545,11 +545,15 @@ def build_case(
     entity_extra: list[dict[str, Any]] | None = None,
     complete: bool = True,
     mutate_observations: Any = None,
+    prompt_fields: dict[str, dict[str, Any]] | None = None,
 ) -> Case:
     """一个已封存、已采集的合成项目；complete=True 时写入一套“全部通过”的结果文件。"""
     project = factory.make_project(root, prereg=prereg, **(project_fields or {}))
     factory.make_entities(root, extra=entity_extra)
-    prompts = [factory.make_prompt(f"Q{index:03d}") for index in range(1, 11)]
+    prompts = [
+        factory.make_prompt(f"Q{index:03d}", **(prompt_fields or {}).get(f"Q{index:03d}", {}))
+        for index in range(1, 11)
+    ]
     prompt_set = factory.seal_prompts(root, project, prompts)
     observations = observations_for(project, prompt_set)
     if mutate_observations is not None:

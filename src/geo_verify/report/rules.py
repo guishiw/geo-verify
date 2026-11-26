@@ -34,6 +34,7 @@ DEDICATED_NOTICES = frozenset(
     }
 )
 DAILY_METRICS = frozenset({"recommendation_rate_daily"})
+NO_AUDIT = "out/metrics.json 没有 exclusion_audit：剔除审计未执行，无法确认剔除规则是否预先登记、是否选择性剔除"
 
 
 @dataclass
@@ -208,12 +209,15 @@ def _rule_unregistered(inputs: Inputs) -> Rule:
     title = "剔除规则均已预先登记"
     audit = _audit(inputs)
     if audit is None:
-        basis = (
-            _missing("metrics", "剔除规则检查")
-            if inputs.get("metrics") is None
-            else "metrics.json 没有 exclusion_audit，剔除审计未执行"
-        )
-        return Rule("R-EXCLUSION-UNREGISTERED", title, INTEGRITY, "not_run", basis)
+        if inputs.get("metrics") is None:
+            return Rule(
+                "R-EXCLUSION-UNREGISTERED",
+                title,
+                INTEGRITY,
+                "not_run",
+                _missing("metrics", "剔除规则检查"),
+            )
+        return Rule("R-EXCLUSION-UNREGISTERED", title, INTEGRITY, "warning", NO_AUDIT)
     unregistered = list(audit["unregistered_rules"])
     count = sum(
         item["excluded_observations"] for item in audit["rules"] if item["rule_id"] in unregistered
@@ -234,12 +238,15 @@ def _rule_selective(inputs: Inputs) -> Rule:
     title = "无选择性剔除"
     audit = _audit(inputs)
     if audit is None:
-        basis = (
-            _missing("metrics", "选择性剔除检查")
-            if inputs.get("metrics") is None
-            else "metrics.json 没有 exclusion_audit，剔除审计未执行"
-        )
-        return Rule("R-EXCLUSION-SELECTIVE", title, INTEGRITY, "not_run", basis)
+        if inputs.get("metrics") is None:
+            return Rule(
+                "R-EXCLUSION-SELECTIVE",
+                title,
+                INTEGRITY,
+                "not_run",
+                _missing("metrics", "选择性剔除检查"),
+            )
+        return Rule("R-EXCLUSION-SELECTIVE", title, INTEGRITY, "warning", NO_AUDIT)
     details = {
         "excluded_observations": audit["excluded_observations"],
         "rules": [
