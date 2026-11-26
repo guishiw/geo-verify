@@ -20,5 +20,9 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           python-version: ${{ matrix.python-version }}
+      # 浏览器辅助插件的 JS 测试（tests/test_extension.py）用 Node 运行，没有 Node 会失败而不是跳过
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
       - run: make setup
       - run: make check
