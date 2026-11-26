@@ -1,4 +1,4 @@
-"""`geo-verify annotate`：规则标注（rules）、人工覆盖（override）、批量导入（import）。"""
+"""`geo-verify annotate`：规则标注（rules）、人工覆盖（override）、批量导入（import）、双人一致性（kappa）。"""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from geo_verify import audit
-from geo_verify.annotate import human, run_rules
+from geo_verify.annotate import human, kappa, run_rules
 from geo_verify.cli import CommandResult, SubParsers, add_command, add_group
 from geo_verify.errors import EXIT_CHECK_FAILED, EXIT_OK, InputError
 
@@ -120,8 +120,33 @@ def _import(args: argparse.Namespace) -> CommandResult:
     )
 
 
+def _kappa(args: argparse.Namespace) -> CommandResult:
+    fields = (args.field,) if args.field else kappa.FIELDS
+    document = kappa.compute(args.project, args.a, args.b, fields)
+    lines = [f"标注者 {args.a} 与 {args.b} 的一致性（Cohen's kappa）："]
+    for entry in document["fields"]:
+        value = f"kappa = {entry['kappa']}" if entry["kappa"] is not None else "kappa 无定义"
+        lines.append(
+            f"  {entry['field']}：比较 {entry['compared']} 项，一致 {entry['agreements']}，"
+            f"分歧 {entry['disagreements']}，{value}"
+            + (f"（{entry['null_reason']}）" if entry["null_reason"] else "")
+        )
+    unresolved = document["unresolved"]
+    if unresolved:
+        lines.append(f"{unresolved} 项争议未解决，进入复核；明细见 {kappa.DISPUTES_RELPATH}。")
+    else:
+        lines.append(f"没有未解决的争议项；结果见 {kappa.DISPUTES_RELPATH}。")
+    return CommandResult(
+        data={**document, "output": kappa.DISPUTES_RELPATH},
+        text="\n".join(lines),
+        exit_code=EXIT_CHECK_FAILED if unresolved else EXIT_OK,
+    )
+
+
 def register(subparsers: SubParsers) -> None:
-    group = add_group(subparsers, "annotate", help="标注：规则判断、人工覆盖、批量导入人工标注")
+    group = add_group(
+        subparsers, "annotate", help="标注：规则判断、人工覆盖、批量导入人工标注、双人一致性"
+    )
     rules = add_command(
         group,
         "rules",
@@ -168,3 +193,16 @@ def register(subparsers: SubParsers) -> None:
     importer.add_argument("--now", help="标注时间（UTC），默认取当前时间")
     importer.add_argument("--template", choices=["csv", "jsonl"], help="输出导入模板后退出")
     importer.add_argument("--out", help="模板输出文件，默认打印到标准输出")
+
+    agreement = add_command(
+        group,
+        "kappa",
+        _kappa,
+        help="两名标注者的 Cohen's kappa；争议项写入 out/disputes.json，有未解决的争议退出 1",
+    )
+    agreement.add_argument("project", help="项目目录")
+    agreement.add_argument("--a", required=True, help="标注者 A（annotator.id）")
+    agreement.add_argument("--b", required=True, help="标注者 B（annotator.id）")
+    agreement.add_argument(
+        "--field", choices=list(kappa.FIELDS), help="只计算一个字段；默认 mentioned 与 recommended"
+    )
