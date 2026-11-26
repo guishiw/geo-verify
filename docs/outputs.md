@@ -20,8 +20,8 @@ prompt_set            {version, content_hash}
 parameters            {seed, iterations, confidence_level}
 sufficiency_thresholds {min_windows, min_valid_observations}
 observations          {total, in_selected_version, valid}
-registered_metrics    预先登记的指标清单
-notices               [{code, severity: "info"|"warning"|"error", message, ...}]
+registered_metrics    预先登记的指标清单（展开后的 metric_ids、effective、note）
+notices               [{code, severity: "info"|"warning"|"error", message, details?}]
 exclusion_audit       见下
 results               [metric_result 契约对象]
 ```
@@ -57,18 +57,26 @@ formula               "symmetric_relative_difference"
 formula_text          "偏离度 = |A − B| / ((A + B) / 2)；A = B = 0 时为 0"
 formula_note          说明此公式是本项目的定义（047 给了 30% 的阈值，未给公式）
 threshold             0.3
-preregistered         公式、阈值、指标、通道是否全部取自封存前登记内容（被命令行参数覆盖则为 false）
-metric_id, channel_a, channel_b
+preregistered         公式、阈值、指标、通道是否全部取自封存前登记内容（被命令行参数覆盖或封存后改口径则为 false）
+registered            封存前登记的 crosscheck 配置
+overridden            被命令行覆盖的字段名列表
+metric_id, channel_a, channel_b, platform
 parameters            {seed, iterations, confidence_level}
+sufficiency_thresholds {min_windows, min_valid_observations}
 status                "pass" | "fail" | "undetermined"
 status_label          "通过" | "不通过" | "不可判定"
 reason                整体结论的理由
+notices               [{code, severity, message, details?}]
 results               [{platform,                       null 表示全部平台合并
-                        a {channel, value, numerator, denominator, windows, sufficient},
+                        merged_platforms[],
+                        a {channel, value, null_reason, numerator, denominator, queries,
+                           windows, valid_observations, sufficient, sufficiency_reasons[],
+                           interval, interval_note},
                         b {同上},
                         deviation,                      任一通道分母为 0 时为 null
                         difference,                     A − B（比例差，即百分点差 / 100）
                         interval {method, level, low, high} | null,
+                        interval_note,
                         paired_queries,
                         status, status_label, reason}]
 ```
@@ -82,21 +90,35 @@ results               [{platform,                       null 表示全部平台�
 ```text
 baseline              {project_id, prompt_set{version, content_hash}, windows, valid_observations}
 current               {同上}
+metrics               参与比较的指标编号列表
+platform              --platform 过滤值（或 null）
 parameters            {seed, iterations, confidence_level}
+sufficiency_thresholds {baseline{min_windows, min_valid_observations}, current{同上}}
+method                差值、区间、结论、favorable 与范围对齐的口径说明
+limitations           基线对比的已知限制列表
 status                "ok" | "refused" | "insufficient"
+status_label          "已比较" | "拒绝比较" | "样本不足"
+reason                整体结论说明
 refusal               null | {code: "prompt_set_mismatch" | "model_version_changed", message, details}
-results               [{metric_id, platform,
-                        baseline {value, numerator, denominator},
+notices               [{code, severity, message, details?}]
+results               [{metric_id, platform, higher_is_better,
+                        baseline {value, null_reason, numerator, denominator, queries, windows,
+                                  valid_observations, sufficient, sufficiency_reasons[]},
                         current {同上},
-                        difference,                     当前 − 基线
+                        cells [{platform, channel}],
+                        difference,                     同题配对比例差（当前 − 基线）的等权均值
+                        baseline_paired_mean, current_paired_mean,
                         interval {method: "paired_cluster_bootstrap", level, low, high} | null,
-                        paired_queries, sufficient,
+                        paired_queries, baseline_only_queries, current_only_queries,
+                        sufficient,
                         conclusion: "提升" | "下降" | "不能判定",
                         conclusion_code: "improved" | "declined" | "inconclusive",
-                        reason}]
+                        favorable: true | false | null,
+                        unmatched_cells [{platform, channel, side}],
+                        preregistered, role, reason}]
 ```
 
-规则：题库 `content_hash` 不同 → `refused`（禁止混算）；任一平台的模型或产品版本集合在基线与当前之间不同 → `refused`（须重建基线）。
+规则：题库 `content_hash` 不同 → `refused`（禁止混算）；任一平台同通道的模型或产品版本集合在两期之间不同，或任一期内部出现多个版本 → `refused`（须重建基线）。
 区间下界 > 0 为提升，上界 < 0 为下降，否则不能判定；样本不足时一律不能判定。
 退出码：`ok` 0，`refused` 1，`insufficient` 3。`refused` 时仍写出文件，`results` 为空。
 
@@ -130,7 +152,7 @@ notice
 退出码：有告警 1，无告警 0，无法比较（窗口或日期不足）3。**无法比较时也写出本文件**（`status = "insufficient"`，
 `alerts`、`leads`、`rule_summary` 为空，`baseline` / `current` / `citation_changes` 为 null），避免 `report` 读到上一次运行留下的旧结论；
 `--json` 的标准输出仍是错误对象 `{"error": "insufficient_data", "message", "details"}`，`details.output` 为结果文件路径。
-`report` 读到 `insufficient` 时把 R-ALERTS 记为“不可判定”（status `warning`，有保留）。
+`report` 读到 `insufficient` 时把 `R-ALERTS` 记为“不可判定”（status `warning`，有保留）。
 
 ## `out/evidence-verify.json`（`kind: "evidence_verify"`）
 
@@ -167,8 +189,13 @@ prompt_set            {version, content_hash}
 fraction, seed, preregistered
 total_queries
 query_ids             被抽中的题目编号（排序）
-items                 [{observation_id, query_id, entity_id, source: "sample" | "dispute"}]
+sampling              {method: "sha256_rank", rule}
+counts, disputes, notices
+items                 [{observation_id, query_id, entity_id, platform, source: "sample" | "dispute",
+                        disputed, annotation_id}]
 ```
+
+详细字段与 `recheck/plan.csv` 约定见 [recheck.md](recheck.md)。
 
 ## `recheck/result.json`（`kind: "recheck_result"`）
 
@@ -178,25 +205,30 @@ fields                比对的字段，如 ["mentioned", "recommended", "rank"]
 planned, checked, agreed, disagreed, not_checked
 pass_rate             agreed / checked；checked 为 0 时为 null
 null_reason
-items                 [{observation_id, entity_id, agree, differences [{field, original, rechecked}]}]
+by_source, input, errors, notices, not_checked_items, unplanned, unplanned_items
+items                 [{observation_id, entity_id, source, annotation_id, agree,
+                        original, rechecked, differences [{field, original, rechecked}], note}]
 ```
 
 ## `out/report.json`（`kind: "report"`）
 
 ```text
+watermark             合成数据时为水印文案，否则为 null
 generated_at          仅取自 --now；未传时为 null
 notice                "本报告为工具预检结论，不构成独立第三方验证"
 verdict               {code: "pass" | "conditional_pass" | "fail" | "insufficient_data",
-                       label: "通过" | "有条件通过" | "不通过" | "数据不足"}
-rules                 [{rule_id, title, status: "pass" | "fail" | "warning" | "insufficient" | "not_run",
+                       label: "通过" | "有条件通过" | "不通过" | "数据不足",
+                       summary, decided_by[], reservations[]}
+rules                 [{rule_id, title, group, status: "pass" | "fail" | "warning" | "insufficient" | "not_run",
                         status_label, basis, details}]
-project               项目、委托方、服务方、平台、周期与窗口、环境
+project               项目、委托方、服务方、平台、周期与窗口、环境、封存题库摘要
 preregistration       预先登记的指标、口径、阈值、交叉验证公式
 metrics               每个披露指标：值、分子分母、区间、平台、题量、日期、次数、环境、统计方法、限制、是否事后指标
 crosscheck, compare, alerts, evidence, exclusions, recheck, disputes
                       取自对应结果文件的摘要；文件缺失时为 {"status": "not_run"}
-limitations           限制条件
-disclosure            利益关系披露（取自 project.json）
+observation_index     {total, columns[], preview[]}（完整索引见 out/observations.csv）
+limitations           [{code, text}]   限制条件
+disclosure            利益关系披露（取自 project.json，含 operator_warning）
 signatures            人工签字栏（留空待签）
 inputs                [{path, sha256}]   报告读取的每个文件及其哈希
 ```
