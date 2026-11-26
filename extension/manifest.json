@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "GEO 预检：保存所选回答",
+  "version": "0.1.0",
+  "description": "用户点击后保存当前所选内容和其中的链接为本地文件；不自动提问、不自动翻页、不联网。",
+  "permissions": ["activeTab", "scripting"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "保存所选回答（仅在点击时读取当前选中的内容）"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "format": "geo-verify-capture/1",
+  "capture": "browser_assist",
+  "saved_at": "2026-10-08T02:00:00Z",
+  "url": "https://chat.engine-a.example/share/abc",
+  "title": "澜序 S7 续航问答（虚构示例）",
+  "platform": "engine-a",
+  "window_id": "W1",
+  "query_id": "Q001",
+  "messages": [
+    {
+      "role": "user",
+      "content": "澜序 S7 长续航版的 CLTC 续航是多少？"
+    },
+    {
+      "role": "assistant",
+      "content": "澜序 S7 长续航版的 CLTC 续航为 620 km，WLTC 续航为 540 km。\n参考：评测文章、权威数据。"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://auto-review.example/a",
+      "title": "评测文章"
+    },
+    {
+      "url": "https://gov-data.example/b",
+      "title": "权威数据"
+    }
+  ],
+  "model": null,
+  "environment": {
+    "entry_form": "web",
+    "entry_features": "网页端默认模式",
+    "logged_in": false,
+    "history_cleared": true,
+    "web_search": null,
+    "region": "上海",
+    "device": "桌面浏览器"
+  },
+  "operator": "采集人甲",
+  "synthetic": true
+}
