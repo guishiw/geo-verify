@@ -320,3 +320,81 @@ def test_blank_answers_and_duplicate_lines_are_skipped(tmp_path: Path) -> None:
 def test_entity_selection_does_not_repeat_entities() -> None:
     proj = {"target_entity_id": LANXU, "competitor_entity_ids": [CENYE, S7]}
     assert annotated_entity_ids(proj, auto_entities()) == DEFAULT_ENTITIES
+
+
+def test_fast_annotation_validation_matches_contract_examples_and_edge_cases(
+    tmp_path: Path,
+) -> None:
+    import copy
+
+    import pytest
+    from conftest import load_examples
+
+    from geo_verify.annotate.records import _fast_valid_annotation, append_annotations
+    from geo_verify.errors import InputError
+
+    examples = load_examples("annotation")
+    for valid in examples["valid"]:
+        # 带 citation_checks 或非空 flags 的合法样例会安全回退到完整 Schema 校验并照常写入
+        out = tmp_path / "valid.jsonl"
+        assert append_annotations(out, [valid]) == 1
+
+    for case in examples["invalid"]:
+        assert not _fast_valid_annotation(case["instance"]), case["why"]
+        with pytest.raises(InputError):
+            append_annotations(tmp_path / "invalid.jsonl", [case["instance"]])
+
+    base: dict[str, Any] = {
+        "schema_version": "1.0",
+        "annotation_id": "a-0123456789abcdef",
+        "observation_id": "o-0123456789abcdef",
+        "project_id": "auto-demo",
+        "entity_id": LANXU,
+        "mentioned": True,
+        "recommended": True,
+        "negated": False,
+        "rankable": True,
+        "rank": 1,
+        "rank_list_size": 3,
+        "sentiment": "positive",
+        "risk": {
+            "flags": [],
+            "unfounded_negative": False,
+            "identified": False,
+            "confirmed": None,
+            "closed": None,
+        },
+        "spans": [{"kind": "mention", "start": 0, "end": 2}],
+        "annotator": {"type": "rule", "id": "geo-verify-rules", "version": "1.0"},
+        "created_at": NOW,
+        "supersedes": None,
+        "note": "说明",
+        "synthetic": True,
+        "ext": {"rule_codes": ["mention_direct"]},
+    }
+    assert _fast_valid_annotation(base)
+
+    mutated_cases: list[dict[str, Any]] = [
+        {**base, "unknown": 1},
+        {**base, "schema_version": "2.0"},
+        {**base, "annotation_id": " bad id"},
+        {**base, "mentioned": "yes"},
+        {**base, "rank": True},
+        {**base, "mentioned": False, "recommended": True, "rank": None},
+        {**base, "rankable": False, "rank": 1},
+        {**base, "negated": True, "recommended": True},
+        {**base, "rank_list_size": 0},
+        {**base, "sentiment": "mixed"},
+        {**base, "created_at": "2026-10-08"},
+        {**base, "supersedes": "bad id"},
+        {**base, "risk": {**base["risk"], "flags": ["other"]}},
+        {**base, "annotator": {"type": "rule", "id": "   ", "version": "1.0"}},
+        {**base, "spans": "not-a-list"},
+        {**base, "spans": [{"kind": "mention", "start": 0, "end": 0}]},
+        {**base, "note": 123},
+        {**base, "synthetic": "true"},
+        {**base, "ext": []},
+    ]
+    for mutated in mutated_cases:
+        sample = copy.deepcopy(mutated)
+        assert not _fast_valid_annotation(sample), sample
