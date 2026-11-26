@@ -222,9 +222,16 @@ def ids_hash(ids: list[str]) -> str:
 
     对字符串数组而言，RFC 8785 的序列化与“紧凑分隔符、不转义非 ASCII”的 JSON 相同，
     这里直接用标准库生成同样的字节串，以便处理十万级的列表（测试中与 canon.hash_obj 比对）。
+    无法编码为 UTF-8 的编号（如孤立代理项）不合契约，按输入错误处理，与 canon.hash_obj 一致。
     """
     text = json.dumps(ids, ensure_ascii=False, separators=(",", ":"))
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+    try:
+        data = text.encode("utf-8")
+    except UnicodeEncodeError as exc:
+        raise InputError(
+            "编号中含有无法编码为 UTF-8 的字符，不符合契约；请先运行 geo-verify validate 检查"
+        ) from exc
+    return hashlib.sha256(data).hexdigest()
 
 
 @dataclass
@@ -760,20 +767,28 @@ class Engine:
                 table, empty, empty, _reason("尚未执行抽样复核（缺少 recheck/result.json）")
             )
         row_valid: BoolArray = index.valid[recheck.table.obs]
+        reviewed = row_valid & recheck.checked
+        pending = row_valid & ~recheck.checked
         unmatched = recheck.unmatched
 
         def components(rows: BoolArray, obs_scope: BoolArray) -> dict[str, Any]:
             whole_project = bool(obs_scope.all())
             return {
                 "items_without_valid_observation": _count(~row_valid & rows)
-                + (unmatched if whole_project else 0)
+                + (unmatched if whole_project else 0),
+                "not_checked": _count(pending & rows),
             }
+
+        def zero_reason(rows: BoolArray) -> str:
+            if _count(pending & rows):
+                return "复核结果中只有尚未复核的项，没有已复核的项"
+            return "复核结果中没有对应有效观测的复核项"
 
         return _Ratio(
             recheck.table,
-            row_valid & recheck.agree,
-            row_valid,
-            _reason("复核结果中没有对应有效观测的复核项"),
+            reviewed & recheck.agree,
+            reviewed,
+            zero_reason,
             components,
         )
 

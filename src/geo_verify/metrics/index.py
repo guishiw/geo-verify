@@ -128,8 +128,11 @@ class JudgmentTable:
 
 @dataclass(frozen=True)
 class RecheckTable:
+    """抽样复核项。checked 为 False 的是“计划内但尚未复核”的项，不进通过率的分母。"""
+
     table: Table
     agree: BoolArray
+    checked: BoolArray
     unmatched: int
 
 
@@ -772,23 +775,34 @@ def _load_recheck(path: Path, first_position: dict[str, int]) -> RecheckTable | 
     ids: list[str] = []
     obs: list[int] = []
     agree: list[bool] = []
+    checked: list[bool] = []
     unmatched = 0
     seen: set[str] = set()
     for item in items:
         try:
             item_id = f"{item['observation_id']}|{item['entity_id']}"
-            agreed = item["agree"] is True
+            agreed = item["agree"]
             position = first_position.get(item["observation_id"])
         except (KeyError, TypeError) as exc:
             raise InputError(
                 "recheck/result.json 的 items 须含 observation_id、entity_id、agree"
             ) from exc
+        if agreed is not None and not isinstance(agreed, bool):
+            raise InputError(
+                f"recheck/result.json 中 {item_id} 的 agree 须为 true、false 或 null（尚未复核）"
+            )
         if position is None or item_id in seen:
             unmatched += 1
             continue
         seen.add(item_id)
         ids.append(item_id)
         obs.append(position)
-        agree.append(agreed)
+        agree.append(agreed is True)
+        checked.append(agreed is not None)
     table, order = _sorted_table("observation", ids, obs)
-    return RecheckTable(table, np.asarray(agree, dtype=np.bool_)[order], unmatched)
+    return RecheckTable(
+        table,
+        np.asarray(agree, dtype=np.bool_)[order],
+        np.asarray(checked, dtype=np.bool_)[order],
+        unmatched,
+    )
