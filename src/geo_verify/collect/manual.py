@@ -415,7 +415,12 @@ def _read_snapshots(
         source = base_dir / name
         if not source.is_file():
             raise FieldError(column, f"快照文件不存在：{name}（相对于目录 {base_dir.name}）")
-        content = source.read_bytes()
+        try:
+            content = source.read_bytes()
+        except OSError as exc:
+            raise FieldError(
+                column, f"快照文件无法读取：{name}（{exc.strerror or type(exc).__name__}）"
+            ) from exc
         digest = sha256_bytes(content)
         stored = f"{SNAPSHOTS_DIR}/{observation_id}/{parts[-1]}"
         if stored in found:

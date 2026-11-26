@@ -16,22 +16,54 @@ def dumps_line(record: dict[str, Any]) -> str:
     return json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
 
+def _unreadable(path: Path, exc: OSError) -> InputError:
+    """把“读不了文件”的系统错误转成输入错误（退出码 2），说明是哪个文件、为什么。"""
+    if isinstance(exc, FileNotFoundError):
+        return InputError(f"文件不存在：{path}")
+    if isinstance(exc, IsADirectoryError):
+        return InputError(f"{path} 是目录，不是文件")
+    return InputError(f"无法读取文件 {path}：{exc.strerror or type(exc).__name__}")
+
+
+def read_bytes(path: Path) -> bytes:
+    """读取输入文件的全部字节。读不了（不存在、是目录、没有权限等）一律是输入错误。"""
+    try:
+        return path.read_bytes()
+    except OSError as exc:
+        raise _unreadable(path, exc) from exc
+
+
+def read_text(path: Path, *, encoding: str = "utf-8") -> str:
+    """读取 UTF-8 文本文件（encoding 可为 utf-8-sig 以去掉 BOM）；不是 UTF-8 是输入错误。"""
+    try:
+        return read_bytes(path).decode(encoding)
+    except UnicodeDecodeError as exc:
+        raise InputError(f"{path} 不是 UTF-8 编码") from exc
+
+
 def iter_jsonl(path: Path) -> Iterator[tuple[int, dict[str, Any]]]:
     """逐行产出 (行号, 记录)；行号从 1 开始。空行视为输入错误。"""
     if not path.exists():
         raise InputError(f"文件不存在：{path}")
-    with path.open("r", encoding="utf-8") as handle:
-        for number, raw in enumerate(handle, start=1):
-            line = raw.rstrip("\n")
-            if not line.strip():
-                raise InputError(f"{path} 第 {number} 行为空行")
-            try:
-                value = json.loads(line)
-            except json.JSONDecodeError as exc:
-                raise InputError(f"{path} 第 {number} 行不是合法 JSON：{exc.msg}") from exc
-            if not isinstance(value, dict):
-                raise InputError(f"{path} 第 {number} 行不是 JSON 对象")
-            yield number, value
+    try:
+        handle = path.open("r", encoding="utf-8")
+    except OSError as exc:
+        raise _unreadable(path, exc) from exc
+    with handle:
+        try:
+            for number, raw in enumerate(handle, start=1):
+                line = raw.rstrip("\n")
+                if not line.strip():
+                    raise InputError(f"{path} 第 {number} 行为空行")
+                try:
+                    value = json.loads(line)
+                except json.JSONDecodeError as exc:
+                    raise InputError(f"{path} 第 {number} 行不是合法 JSON：{exc.msg}") from exc
+                if not isinstance(value, dict):
+                    raise InputError(f"{path} 第 {number} 行不是 JSON 对象")
+                yield number, value
+        except UnicodeDecodeError as exc:
+            raise InputError(f"{path} 不是 UTF-8 编码") from exc
 
 
 def read_jsonl(path: Path, *, missing_ok: bool = False) -> list[dict[str, Any]]:
@@ -64,6 +96,6 @@ def read_json(path: Path) -> Any:
     if not path.exists():
         raise InputError(f"文件不存在：{path}")
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
+        return json.loads(read_text(path))
     except json.JSONDecodeError as exc:
         raise InputError(f"{path} 不是合法 JSON：{exc.msg}（第 {exc.lineno} 行）") from exc

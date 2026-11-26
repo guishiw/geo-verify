@@ -1024,3 +1024,31 @@ def test_fill_tolerates_missing_optional_columns(root: Path, tmp_path: Path) -> 
         "operator",
         "snapshots",
     }
+
+
+def test_fill_unreadable_snapshot_is_a_row_error(
+    root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # 快照文件存在但读不了（没有权限等）：该行报错，不能按内部错误退出
+    out = tmp_path / "pack"
+    assert pack(root, out, "--queries", "Q001,Q002")[0] == 0
+    fieldnames, rows = read_tasks(out / "tasks.csv")
+    (out / "shots").mkdir()
+    (out / "shots" / "locked.png").write_bytes(b"png")
+    (out / "shots" / "ok.png").write_bytes(b"png2")
+    answered(rows[0], snapshot_files="shots/locked.png")
+    answered(rows[1], snapshot_files="shots/ok.png")
+    write_tasks(out / "tasks.csv", fieldnames, rows)
+    original = Path.read_bytes
+
+    def read_bytes(self: Path) -> bytes:
+        if self.name == "locked.png":
+            raise PermissionError(13, "Permission denied", str(self))
+        return original(self)
+
+    monkeypatch.setattr(Path, "read_bytes", read_bytes)
+    code, data = fill(root, out / "tasks.csv")
+    assert code == 1
+    assert data["written"] == 1
+    assert [(item["line"], item["column"]) for item in data["errors"]] == [(2, "snapshot_files")]
+    assert "locked.png" in data["errors"][0]["reason"]

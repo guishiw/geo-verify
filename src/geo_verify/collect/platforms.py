@@ -19,6 +19,7 @@ from typing import Any
 from urllib.parse import urlsplit
 
 from geo_verify.errors import InputError
+from geo_verify.jsonl import read_bytes
 
 BUILTIN_FILE = "platforms.toml"
 STATUS_VERIFIED = "已核实"
@@ -162,7 +163,7 @@ def load_platform_configs(path: Path | None = None) -> dict[str, PlatformConfig]
         if not path.is_file():
             raise InputError(f"平台配置文件不存在：{path}")
         try:
-            text = path.read_text(encoding="utf-8")
+            text = read_bytes(path).decode("utf-8")
         except UnicodeDecodeError as exc:
             raise InputError(f"平台配置文件 {label} 不是 UTF-8 编码") from exc
     try:

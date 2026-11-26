@@ -44,7 +44,7 @@ from geo_verify.collect.base import (
 from geo_verify.collect.openai_compat import is_garbled
 from geo_verify.collect.tasks import plan_tasks
 from geo_verify.errors import InputError
-from geo_verify.jsonl import append_jsonl
+from geo_verify.jsonl import append_jsonl, read_bytes
 from geo_verify.timeutil import format_utc, parse_utc
 
 NAME = "share"
@@ -689,7 +689,7 @@ def run(args: argparse.Namespace) -> CommandResult:
     source = Path(args.input)
     if not source.is_file():
         raise InputError(f"文件不存在：{source}")
-    raw = source.read_bytes()
+    raw = read_bytes(source)
     name = source.name
     fmt = detect_format(name, raw)
     if fmt == "json":

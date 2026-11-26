@@ -36,7 +36,7 @@ from geo_verify.collect.base import (
     trace_id_for,
 )
 from geo_verify.errors import InputError
-from geo_verify.jsonl import dumps_line, write_json
+from geo_verify.jsonl import dumps_line, read_bytes, write_json
 
 DEFAULT_CHANNEL = "file_import"
 ERRORS_RELPATH = "out/import-errors.json"
@@ -245,7 +245,7 @@ def read_text(path: Path) -> str:
     if not path.is_file():
         raise InputError(f"文件不存在：{path}")
     try:
-        return path.read_text(encoding="utf-8-sig")
+        return read_bytes(path).decode("utf-8-sig")
     except UnicodeDecodeError as exc:
         raise InputError(f"{path.name} 不是 UTF-8 编码") from exc
 

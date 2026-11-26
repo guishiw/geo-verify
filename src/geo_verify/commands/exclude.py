@@ -8,6 +8,7 @@ from pathlib import Path
 from geo_verify import audit, project
 from geo_verify.cli import CommandResult, SubParsers, add_command
 from geo_verify.errors import InputError
+from geo_verify.jsonl import read_text
 
 
 def _requested_ids(args: argparse.Namespace) -> list[str]:
@@ -15,7 +16,7 @@ def _requested_ids(args: argparse.Namespace) -> list[str]:
         path = Path(args.ids_file)
         if not path.is_file():
             raise InputError(f"文件不存在：{path}")
-        raw = path.read_text(encoding="utf-8").replace("\n", ",")
+        raw = read_text(path).replace("\n", ",")
     else:
         raw = args.ids
     ids: list[str] = []

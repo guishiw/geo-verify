@@ -26,7 +26,7 @@ from typing import Any
 
 from geo_verify.canon import sha256_bytes
 from geo_verify.errors import InputError
-from geo_verify.jsonl import read_json, write_json
+from geo_verify.jsonl import read_bytes, read_json, write_json
 from geo_verify.report.recheck import (
     FIELDS,
     PLAN_PATH,
@@ -91,12 +91,12 @@ def _detect_format(path: Path, declared: str | None) -> str:
     raise InputError(f"无法从扩展名判断复核文件格式：{path.name}；请用 --format csv|jsonl 指明")
 
 
-def _decode(data: bytes) -> str:
+def _decode(data: bytes, name: str) -> str:
     try:
         return data.decode("utf-8-sig")
     except UnicodeDecodeError as exc:
         raise InputError(
-            "复核文件不是 UTF-8 编码：请在表格软件中另存为“CSV UTF-8”后再导入"
+            f"复核文件 {name} 不是 UTF-8 编码：请在表格软件中另存为“CSV UTF-8”后再导入"
         ) from exc
 
 
@@ -104,8 +104,8 @@ def read_input(path: Path, fields: Sequence[str], declared_format: str | None = 
     if not path.is_file():
         raise InputError(f"复核结果文件不存在：{path.name}")
     file_format = _detect_format(path, declared_format)
-    data = path.read_bytes()
-    text = _decode(data)
+    data = read_bytes(path)
+    text = _decode(data, path.name)
     if not text.strip():
         raise InputError(f"复核结果文件是空文件：{path.name}")
     parsed = InputFile(file_format, sha256_bytes(data))
@@ -286,7 +286,7 @@ def load_plan(root: Path) -> tuple[list[PlanItem], str] | None:
             raise InputError(f"{where}与前面的项重复：{observation_id} / {entity_id}")
         seen.add((observation_id, entity_id))
         items.append(PlanItem(observation_id, entity_id, source, annotation_id))
-    return items, sha256_bytes(path.read_bytes())
+    return items, sha256_bytes(read_bytes(path))
 
 
 # ------------------------------------------------------------------ 比对
