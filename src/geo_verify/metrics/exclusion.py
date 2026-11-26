@@ -152,11 +152,22 @@ def _compare(engine: Engine, restored: Engine, metric_id: str) -> dict[str, Any]
     unfavorable_gap = -gap if lower_is_better else gap
     p_value = hypergeometric_tail(all_den, all_num, out_den, out_num, lower=not lower_is_better)
     comparison["p_value"] = p_value
-    comparison["selective"] = (
-        out_den >= SELECTIVE_MIN_EXCLUDED
-        and unfavorable_gap >= SELECTIVE_MIN_DIFFERENCE
-        and p_value < SELECTIVE_ALPHA
-    )
+    if out_den < SELECTIVE_MIN_EXCLUDED:
+        comparison["note"] = (
+            f"被剔除的可比较样本只有 {out_den} 条，少于 {SELECTIVE_MIN_EXCLUDED} 条，"
+            "不做选择性判定；上面的数字与 p 值照常列出，仅供人工核查"
+        )
+        return comparison
+    failed: list[str] = []
+    if unfavorable_gap < SELECTIVE_MIN_DIFFERENCE:
+        failed.append(
+            f"朝不利方向的比例差 {unfavorable_gap:.4f} 小于登记的下限 {SELECTIVE_MIN_DIFFERENCE:g}"
+        )
+    if p_value >= SELECTIVE_ALPHA:
+        failed.append(f"单侧检验 p 值 {p_value:.4g} 不小于 {SELECTIVE_ALPHA:g}")
+    comparison["selective"] = not failed
+    if failed:
+        comparison["note"] = "未判为选择性剔除：" + "；".join(failed)
     return comparison
 
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from pathlib import Path
 from typing import Any
 
@@ -183,3 +184,80 @@ def test_lower_is_better_metric_uses_opposite_direction(tmp_path: Path) -> None:
     # 提及率上，被剔除样本并不更差（全部提及），不构成选择性剔除
     assert comparisons["mention_rate"]["selective"] is False
     assert data["exclusion_audit"]["selective"] is True
+
+
+def test_too_few_excluded_samples_are_reported_but_not_judged(tmp_path: Path) -> None:
+    """40 条有效观测中 36 条提及、4 条未提及；剔除的恰好是 4 条未提及。
+
+    被剔除的可比较样本少于登记的下限（5 条）：不做“选择性”判定，但数字和 p 值照常列出，
+    并写明没有判定的原因，不能让读者以为“判定过、没问题”。
+    """
+    b = Builder(tmp_path / "proj", queries=("Q001", "Q002", "Q003", "Q004"))
+    for query in ("Q001", "Q002", "Q003", "Q004"):
+        for index in range(10):
+            b.obs(query, window=f"W{index % 3 + 1}", mentioned=index != 0)
+    b.write()
+    b.exclude(not_mentioned(b, 4), "EX-DUP")
+    comparison = run_metrics(b.root)["exclusion_audit"]["comparisons"][0]
+    assert comparison["retained"] == {"numerator": 36, "denominator": 36, "value": 1.0}
+    assert comparison["excluded"] == {"numerator": 0, "denominator": 4, "value": 0.0}
+    assert comparison["value_if_included"] == 0.9
+    # 单侧超几何检验：C(4,4)·C(36,0)/C(40,4) = 1/91390
+    assert comparison["p_value"] == pytest.approx(1 / math.comb(40, 4), rel=1e-9)
+    assert comparison["selective"] is False
+    assert "少于 5 条" in comparison["note"]
+    assert "不做选择性判定" in comparison["note"]
+
+
+def test_small_difference_is_not_selective_even_when_significant(tmp_path: Path) -> None:
+    """400 条有效观测（200 提及、200 未提及），剔除 150 条：其中 66 条提及、84 条未提及。
+
+    保留样本 134/250 = 0.536，被剔除样本 66/150 = 0.44，差 0.096 < 登记的下限 0.1：
+    即使单侧检验显著（p < 0.05），也不判为选择性剔除；差值与 p 值照常列出并说明原因。
+    """
+    b = Builder(tmp_path / "proj", queries=("Q001", "Q002", "Q003", "Q004"))
+    for query in ("Q001", "Q002", "Q003", "Q004"):
+        for index in range(100):
+            b.obs(query, window=f"W{index % 3 + 1}", mentioned=index < 50)
+    b.write()
+    annotations = {a["observation_id"]: a["mentioned"] for a in b.annotations}
+    mentioned = [o for o in b.observations if annotations[o["observation_id"]]]
+    others = [o for o in b.observations if not annotations[o["observation_id"]]]
+    b.exclude([*mentioned[:66], *others[:84]], "EX-DUP")
+    data = run_metrics(b.root)
+    comparison = data["exclusion_audit"]["comparisons"][0]
+    assert comparison["retained"] == {"numerator": 134, "denominator": 250, "value": 0.536}
+    assert comparison["excluded"] == {"numerator": 66, "denominator": 150, "value": 0.44}
+    # 独立计算的精确 p 值：P(X ≤ 66)，X ~ 超几何(总体 400，命中 200，抽取 150)
+    exact = sum(
+        math.comb(200, hits) * math.comb(200, 150 - hits) for hits in range(67)
+    ) / math.comb(400, 150)
+    assert exact < 0.05
+    assert comparison["p_value"] == pytest.approx(exact, rel=1e-6)
+    assert comparison["selective"] is False
+    assert "0.1" in comparison["note"]
+    assert data["exclusion_audit"]["selective"] is False
+    assert not any(n["code"] == "selective_exclusion" for n in data["notices"])
+
+
+def test_excluded_invalid_observations_are_not_put_back_for_comparison(tmp_path: Path) -> None:
+    """被剔除的 8 条观测本身就是无效观测（上面残留着“未提及”的标注）。
+
+    比较“保留样本”与“被剔除样本”时只能放回本来有效的观测：这 8 条不能被当成不利样本。
+    """
+    b = build_half_mentioned(tmp_path / "proj")
+    invalid = []
+    for _ in range(8):
+        observation = b.obs("Q001", status="invalid", invalid_reason="timeout")
+        b.annotate(observation, mentioned=False, sentiment=None)
+        invalid.append(observation)
+    b.write()
+    b.exclude(invalid, "EX-DUP")
+    audit = run_metrics(b.root)["exclusion_audit"]
+    assert audit["excluded_observations"] == 8
+    comparison = audit["comparisons"][0]
+    assert comparison["retained"] == {"numerator": 20, "denominator": 40, "value": 0.5}
+    assert comparison["excluded"] == {"numerator": 0, "denominator": 0, "value": None}
+    assert comparison["value_if_included"] == 0.5
+    assert comparison["selective"] is False
+    assert audit["selective"] is False
