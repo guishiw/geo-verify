@@ -1,0 +1,180 @@
+{
+  "client": {
+    "id": "client-lanxu",
+    "name": "澜序汽车（虚构委托方）"
+  },
+  "competitor_entity_ids": [
+    "brand-cenye",
+    "brand-shuofeng"
+  ],
+  "disclosure": {
+    "operator_is_provider": true,
+    "relationships": [
+      {
+        "party": "示例监测团队（虚构服务方）",
+        "relationship": "受虚拟委托方委托执行演示预检",
+        "role": "服务方"
+      }
+    ],
+    "statement": "本样例全部为合成数据，仅用于演示 geo-verify 预检流程，不代表任何真实平台表现。",
+    "tool_operator": "示例监测团队（虚构服务方）"
+  },
+  "environment": {
+    "device": null,
+    "history_cleared": true,
+    "logged_in": false,
+    "region": "CN",
+    "web_search": true
+  },
+  "ext": {
+    "generator": "tools/generate_auto_example.py",
+    "generator_seed": 20261001
+  },
+  "industry": "auto",
+  "name": "澜序汽车 GEO 验收预检样例（虚构）",
+  "platforms": [
+    {
+      "channels": [
+        "api",
+        "manual"
+      ],
+      "display_name": "模拟平台 A",
+      "platform_id": "engine-a"
+    },
+    {
+      "channels": [
+        "api",
+        "manual"
+      ],
+      "display_name": "模拟平台 B",
+      "platform_id": "engine-b"
+    }
+  ],
+  "preregistration": {
+    "accuracy_basis": "verifiable",
+    "authority": {
+      "authoritative_tiers": [
+        "A",
+        "B"
+      ],
+      "domain_tiers": {
+        "auto-review.example": "B",
+        "cenye-auto.example": "C",
+        "ev-forum.example": "D",
+        "gov-data.example": "A",
+        "lanxu-auto.example": "C",
+        "news-auto.example": "B",
+        "shuofeng-auto.example": "C"
+      }
+    },
+    "crosscheck": {
+      "channel_a": "api",
+      "channel_b": "manual",
+      "formula": "symmetric_relative_difference",
+      "metric_id": "mention_rate",
+      "threshold": 0.3
+    },
+    "exclusion_rules": [
+      {
+        "description": "同一采集任务重复导入的冗余观测",
+        "rule_id": "EX-DUP"
+      }
+    ],
+    "metrics": [
+      {
+        "definition_version": "1.0",
+        "metric_id": "mention_rate",
+        "role": "acceptance",
+        "threshold": {
+          "op": ">=",
+          "value": 0.6
+        }
+      },
+      {
+        "definition_version": "1.0",
+        "metric_id": "accuracy",
+        "role": "acceptance",
+        "threshold": {
+          "op": ">=",
+          "value": 0.85
+        }
+      },
+      {
+        "definition_version": "1.0",
+        "metric_id": "core_fact_presence",
+        "role": "acceptance",
+        "threshold": {
+          "op": ">=",
+          "value": 0.7
+        }
+      },
+      {
+        "definition_version": "1.0",
+        "metric_id": "intent_coverage",
+        "role": "descriptive",
+        "threshold": null
+      },
+      {
+        "definition_version": "1.0",
+        "metric_id": "top3_rate",
+        "role": "descriptive",
+        "threshold": null
+      },
+      {
+        "definition_version": "1.0",
+        "metric_id": "recommendation_rate",
+        "role": "descriptive",
+        "threshold": null
+      },
+      {
+        "definition_version": "1.0",
+        "metric_id": "target_source_presence",
+        "role": "descriptive",
+        "threshold": null
+      },
+      {
+        "definition_version": "1.0",
+        "metric_id": "authority_share",
+        "role": "descriptive",
+        "threshold": null
+      },
+      {
+        "definition_version": "1.0",
+        "metric_id": "sentiment_distribution",
+        "role": "descriptive",
+        "threshold": null
+      }
+    ],
+    "recheck": {
+      "fraction": 0.2,
+      "seed": 20261001
+    },
+    "recommendation_success": {
+      "criterion": "recommended",
+      "top_n": null
+    },
+    "registered_at": "2026-10-01T01:00:00Z",
+    "registered_by": "甲乙双方共同登记（虚构）",
+    "statistics": {
+      "bootstrap_iterations": 1000,
+      "confidence_level": 0.95,
+      "seed": 20261001
+    },
+    "sufficiency": {
+      "min_valid_observations": 30,
+      "min_windows": 3
+    },
+    "target_sources": [
+      "lanxu-auto.example"
+    ]
+  },
+  "project_id": "auto-demo",
+  "provider": {
+    "id": "provider-demo",
+    "name": "示例监测团队（虚构服务方）"
+  },
+  "schema_version": "1.0",
+  "synthetic": true,
+  "target_entity_id": "brand-lanxu",
+  "timezone": "Asia/Shanghai"
+}

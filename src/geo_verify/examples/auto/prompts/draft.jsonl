@@ -1,0 +1,22 @@
+{"business_level":"L1","core_fact_ids":["F-S7-LAUNCH"],"expects_recommendation":false,"intent_type":"brand","priority":"P0","query_id":"Q001","source":"虚构汽车样例题库（合成）","text":"澜序汽车的定位和主要产品线是什么？"}
+{"business_level":"L1","core_fact_ids":["F-S7-WARRANTY"],"expects_recommendation":false,"intent_type":"brand","priority":"P1","query_id":"Q002","source":"虚构汽车样例题库（合成）","text":"LANXU 品牌目前的市场口碑和用户反馈如何？"}
+{"business_level":"L1","core_fact_ids":["F-S7-RANGE-CLTC","F-S7-PRICE"],"expects_recommendation":false,"intent_type":"product","priority":"P0","query_id":"Q003","source":"虚构汽车样例题库（合成）","text":"澜序 S7 长续航版的续航里程和当前指导价是多少？"}
+{"business_level":"L1","core_fact_ids":["F-S7-BATTERY","F-S7-ACCEL"],"expects_recommendation":false,"intent_type":"product","priority":"P0","query_id":"Q004","source":"虚构汽车样例题库（合成）","text":"澜序 S7 的电池容量和零百加速表现怎么样？"}
+{"business_level":"L3","core_fact_ids":["F-S7-RANGE-CLTC"],"expects_recommendation":true,"intent_type":"category","priority":"P0","query_id":"Q005","source":"虚构汽车样例题库（合成）","text":"20 万到 25 万元区间有哪些纯电中型 SUV 可以备选？"}
+{"business_level":"L3","core_fact_ids":["F-E3-PRICE","F-X5-PRICE"],"expects_recommendation":true,"intent_type":"category","priority":"P1","query_id":"Q006","source":"虚构汽车样例题库（合成）","text":"15 万元左右的纯电家用车一般看哪些车型？"}
+{"business_level":"L3","core_fact_ids":["F-S7-RANGE-CLTC"],"expects_recommendation":true,"intent_type":"scenario","priority":"P0","query_id":"Q007","source":"虚构汽车样例题库（合成）","text":"经常周末跨城自驾的四口之家，选哪几款纯电 SUV 更合适？"}
+{"business_level":"L3","core_fact_ids":["F-M9-RANGE-CLTC"],"expects_recommendation":true,"intent_type":"scenario","priority":"P1","query_id":"Q008","source":"虚构汽车样例题库（合成）","text":"日常通勤兼顾商务接待，30 万元级别纯电中大型车有哪些方案？"}
+{"business_level":"L2","core_fact_ids":["F-S7-RANGE-WLTC"],"expects_recommendation":false,"intent_type":"problem","priority":"P1","query_id":"Q009","source":"虚构汽车样例题库（合成）","text":"冬季高速开暖风时，纯电 SUV 的实际续航一般会有多少衰减？"}
+{"business_level":"L2","expects_recommendation":false,"intent_type":"problem","priority":"P2","query_id":"Q010","source":"虚构汽车样例题库（合成）","text":"没有固定私家充电桩的城市用户，日常使用纯电动车要注意什么？"}
+{"business_level":"L2","core_fact_ids":["F-S7-RANGE-CLTC","F-S7-PRICE"],"expects_recommendation":true,"intent_type":"comparison","priority":"P0","query_id":"Q011","source":"虚构汽车样例题库（合成）","text":"澜序 S7 和岑野 K5 在续航、空间和定价上各有什么特点？"}
+{"business_level":"L2","core_fact_ids":["F-X5-RANGE-CLTC"],"expects_recommendation":true,"intent_type":"comparison","priority":"P1","query_id":"Q012","source":"虚构汽车样例题库（合成）","text":"澜序 X5 与朔风 T6 对比，日常代步选哪一台更均衡？"}
+{"business_level":"L3","core_fact_ids":["F-S7-PRICE"],"expects_recommendation":true,"intent_type":"decision","priority":"P0","query_id":"Q013","source":"虚构汽车样例题库（合成）","text":"预算 22 万元左右买纯电 SUV，现阶段应该按什么顺序试驾？"}
+{"business_level":"L3","core_fact_ids":["F-E3-RANGE-CLTC"],"expects_recommendation":true,"intent_type":"decision","priority":"P1","query_id":"Q014","source":"虚构汽车样例题库（合成）","text":"预算严格控制在 14 万元以内，纯电紧凑型车怎么选更稳妥？"}
+{"business_level":"L1","core_fact_ids":["F-S7-WARRANTY"],"expects_recommendation":false,"intent_type":"after_sales","priority":"P0","query_id":"Q015","source":"虚构汽车样例题库（合成）","text":"澜序汽车的整车质保政策和三电保修周期怎么规定？"}
+{"business_level":"L2","expects_recommendation":false,"intent_type":"after_sales","priority":"P2","query_id":"Q016","source":"虚构汽车样例题库（合成）","text":"纯电车型常规保养项目有哪些，大概的周期和花费是多少？"}
+{"business_level":"L2","expects_recommendation":false,"intent_type":"risk","priority":"P1","query_id":"Q017","source":"虚构汽车样例题库（合成）","text":"购买新势力纯电 SUV 时，在电池衰减和车企售后方面需要留意哪些风险？"}
+{"business_level":"L1","core_fact_ids":["F-S7-PRICE"],"expects_recommendation":false,"intent_type":"risk","priority":"P1","query_id":"Q018","source":"虚构汽车样例题库（合成）","text":"澜序 S7 近期是否调整过售价，早期车主和潜在买家需要注意什么？"}
+{"business_level":"L2","expects_recommendation":true,"intent_type":"competitor","priority":"P1","query_id":"Q019","source":"虚构汽车样例题库（合成）","text":"岑野 S7 和岑野 K5 这两款车分别适合什么人群，同价位还有哪些备选？"}
+{"business_level":"L2","expects_recommendation":true,"intent_type":"competitor","priority":"P2","query_id":"Q020","source":"虚构汽车样例题库（合成）","text":"朔风汽车主力纯电车型 T6 的综合表现如何，市场上有哪几个常见替代项？"}
+{"business_level":"L3","core_fact_ids":["F-S7-RANGE-CLTC","F-S7-PRICE"],"expects_recommendation":true,"intent_type":"general","priority":"P0","query_id":"Q021","source":"虚构汽车样例题库（合成）","text":"2026 年买一台兼顾续航、空间和质保的家用纯电 SUV，综合来看有哪些候选车型？"}
+{"business_level":"L2","expects_recommendation":true,"intent_type":"general","priority":"P1","query_id":"Q022","source":"虚构汽车样例题库（合成）","text":"从续航标准、补能便利性和用车成本三个维度看，家用纯电 SUV 怎么评估？"}
