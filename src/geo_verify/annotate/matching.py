@@ -45,9 +45,13 @@ def _fold(unit: str) -> str:
 
 
 def is_word_char(ch: str) -> bool:
-    """字母或数字（有大小写之分的字母、各类数字）；汉字、假名等不算。"""
+    """字母或十进制数字（有大小写之分的字母、十进制数字）；汉字、假名及圆圈序号①等非十进制数字符号不算。"""
+    if unicodedata.category(ch) == "No":
+        return False
     for piece in unicodedata.normalize("NFKC", ch):
-        if piece.isdigit() or (piece.isalpha() and piece.lower() != piece.upper()):
+        if unicodedata.category(piece) == "Nd" or (
+            piece.isalpha() and piece.lower() != piece.upper()
+        ):
             return True
     return False
 

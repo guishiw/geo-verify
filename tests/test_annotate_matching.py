@@ -146,6 +146,28 @@ def test_word_boundary_also_applies_to_mixed_alias_ends(matcher: EntityMatcher) 
     assert spans(matcher, "看看澜序S7。") == [("product-lanxu-s7", 2, 6)]
 
 
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("①LANXU：表现均衡", [("brand-lanxu", 1, 6)]),
+        ("②CENYE S7：值得考虑", [("product-cenye-s7", 1, 9)]),
+        ("③lanxu S7：续航稳定", [("brand-lanxu", 1, 6), ("product-lanxu-s7", 7, 9)]),
+        ("④S7：性价比高", [("product-lanxu-s7", 1, 3)]),
+        ("⑴Lan-Xu 很省电", [("brand-lanxu", 1, 7)]),
+    ],
+)
+def test_circled_list_markers_do_not_block_alphanumeric_word_boundary(
+    matcher: EntityMatcher, text: str, expected: list[tuple[str, int, int]]
+) -> None:
+    # 圆圈序号 ① 等 Unicode No 类符号不是词内数字，紧接西文别名时不应阻断词边界
+    assert spans(matcher, text) == expected
+
+
+@pytest.mark.parametrize("text", ["1S7 很省电", "１S7 很省电", "2LANXU 很省电"])
+def test_decimal_digits_still_enforce_word_boundary(matcher: EntityMatcher, text: str) -> None:
+    assert spans(matcher, text) == []
+
+
 def test_longest_match_wins_across_entities(matcher: EntityMatcher) -> None:
     # “岑野 S7”被竞品车型整体吃掉，其中的“S7”不再算目标车型，“岑野”也不再单独算一次
     assert spans(matcher, "岑野 S7 也不错") == [("product-cenye-s7", 0, 5)]
