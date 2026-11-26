@@ -33,7 +33,7 @@ def symmetric_relative_difference(a: float, b: float) -> float:
             raise ValueError(f"比例不能为负：{value!r}")
     if a == b:
         return 0.0
-    return abs(a - b) / ((a + b) / 2.0)
+    return 2.0 * (abs(a - b) / (a + b))
 
 
 def deviation_from_counts(
