@@ -47,7 +47,7 @@ USE_LABELS = {
 }
 CROSSCHECK_LABELS = {"pass": "通过", "fail": "不通过", "undetermined": "不可判定"}
 COMPARE_LABELS = {"ok": "已比较", "refused": "拒绝比较", "insufficient": "样本不足"}
-ALERT_LABELS = {"alert": "有告警", "clear": "无告警"}
+ALERT_LABELS = {"alert": "有告警", "clear": "无告警", "insufficient": "无法比较"}
 EVIDENCE_LABELS = {"pass": "通过", "fail": "不通过"}
 
 # 指标名称与 docs/cli.md 的“指标编号”表一致；表外的编号原样展示。

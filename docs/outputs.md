@@ -103,20 +103,34 @@ results               [{metric_id, platform,
 ## `out/alerts.json`（`kind: "alerts"`）
 
 ```text
-baseline_window, current_window
-thresholds            各规则使用的阈值
-status                "alert" | "clear"
-alerts                [{rule_id: "mention_drop" | "negative_spread" | "citation_failure"
+target_entity_id, prompt_set {version, content_hash}
+mode                  "window" | "date"（按窗口或按项目时区的自然日比较）
+baseline_window, current_window       按窗口比较时的窗口编号；按日比较时为 null
+baseline_date, current_date           按日比较时的日期（YYYY-MM-DD）；按窗口比较时为 null
+baseline, current     {window_id, date, valid_observations, first_observed_at, last_observed_at}；无法比较时为 null
+available_windows     有有效观测的窗口，按时间排序
+platform, platforms   --platform 过滤值（或 null）；两侧有数据的平台
+thresholds            各规则使用的阈值；threshold_overrides [{key, value, source}]
+status                "alert" | "clear" | "insufficient"
+status_label          "有告警" | "无告警" | "无法比较"
+reason, details       仅 insufficient：无法比较的原因与明细（如 available_windows）
+alerts                [{alert_id, rule_id: "mention_drop" | "negative_spread" | "citation_failure"
                                   | "competitor_surge" | "platform_conflict",
                         severity: "warning" | "critical",
                         platform, entity_id, message, evidence{...}, observation_ids[]}]
+rule_summary          [{rule_id, title, evaluated, triggered, skipped[]}]
 citation_changes      {added [{domain, current}], removed [{domain, baseline}],
-                       changed [{domain, baseline, current, delta}], note}
-leads                 [{alert_rule_id, text, domains[]}]   待核查的相关线索
+                       changed [{domain, baseline, current, delta}], baseline_citations,
+                       current_citations, by_platform[], note}；insufficient 时为 null
+leads                 [{alert_id, alert_rule_id, platform, text, domains[]}]   待核查的相关线索
+notice
 ```
 
 `citation_changes.note` 与 `leads[].text` 只能使用“相关”“待核查”一类措辞，不表达因果。
-退出码：有告警 1，无告警 0，无法比较（窗口不足）3。
+退出码：有告警 1，无告警 0，无法比较（窗口或日期不足）3。**无法比较时也写出本文件**（`status = "insufficient"`，
+`alerts`、`leads`、`rule_summary` 为空，`baseline` / `current` / `citation_changes` 为 null），避免 `report` 读到上一次运行留下的旧结论；
+`--json` 的标准输出仍是错误对象 `{"error": "insufficient_data", "message", "details"}`，`details.output` 为结果文件路径。
+`report` 读到 `insufficient` 时把 R-ALERTS 记为“不可判定”（status `warning`，有保留）。
 
 ## `out/evidence-verify.json`（`kind: "evidence_verify"`）
 

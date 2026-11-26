@@ -152,7 +152,7 @@ def _check_compare(check: _Checker, doc: dict[str, Any]) -> None:
 
 
 def _check_alerts(check: _Checker, doc: dict[str, Any]) -> None:
-    check.enum(doc, "status", ("alert", "clear"))
+    check.enum(doc, "status", ("alert", "clear", "insufficient"))
     for item in check.objects(doc, "alerts"):
         check.need(isinstance(item.get("message"), str), "alerts 的每一项都要有字符串 message")
     for item in check.objects(doc, "leads", optional=True):

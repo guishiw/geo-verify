@@ -131,6 +131,32 @@ def test_html_shows_notice_verdict_rules_disclosure_and_signatures(case: Case) -
     assert "Q003" in html  # 抽样复核清单
 
 
+def test_html_shows_compared_days_or_why_alerts_could_not_compare(case: Case) -> None:
+    daily = alerts_doc("clear")
+    daily.update(
+        mode="date",
+        baseline_window=None,
+        current_window=None,
+        baseline_date="2026-10-09",
+        current_date="2026-10-10",
+    )
+    case.write("alerts", daily)
+    case.report()
+    html = _html(case)
+    assert "<dt>基线日</dt><dd>2026-10-09</dd>" in html
+    assert "<dt>当前日</dt><dd>2026-10-10</dd>" in html
+    assert "<dt>基线窗口</dt>" not in html
+    insufficient = alerts_doc("clear")
+    insufficient.update(
+        status="insufficient", reason="有有效观测的窗口只有 1 个，无法比较", citation_changes=None
+    )
+    case.write("alerts", insufficient)
+    case.report()
+    html = _html(case)
+    assert "<dt>状态</dt><dd>无法比较</dd>" in html
+    assert "<dt>理由</dt><dd>有有效观测的窗口只有 1 个，无法比较</dd>" in html
+
+
 def test_html_shows_reservations_and_failed_rules(case: Case) -> None:
     case.write("alerts", alerts_doc("alert"))
     case.report()

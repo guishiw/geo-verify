@@ -1,6 +1,7 @@
 """`geo-verify alerts`：比较两个窗口（或两个自然日），识别异常并列出引用域名变化。
 
-有告警退出 1，无告警 0，无法比较（可比较的窗口或日期不足）退出 3。
+有告警退出 1，无告警 0，无法比较（可比较的窗口或日期不足）退出 3；无法比较时也写出结果文件，
+status = "insufficient"，避免报告读到旧结论。
 引用域名变化只作为待核查的相关线索输出，不表示因果。
 """
 
@@ -12,7 +13,7 @@ from typing import Any
 
 from geo_verify.alerts import RULES, compute_alerts
 from geo_verify.cli import CommandResult, SubParsers, add_command
-from geo_verify.errors import EXIT_CHECK_FAILED, EXIT_OK
+from geo_verify.errors import EXIT_CHECK_FAILED, EXIT_OK, InsufficientData
 from geo_verify.jsonl import write_json
 from geo_verify.metrics import build_index
 from geo_verify.project import paths
@@ -73,6 +74,12 @@ def run(args: argparse.Namespace) -> CommandResult:
     )
     out_path = Path(args.out) if args.out else paths(args.project).out_dir / "alerts.json"
     write_json(out_path, document)
+    if document["status"] == "insufficient":
+        # 结果文件照样写出（status = insufficient），命令仍按“数据不足”退出 3
+        raise InsufficientData(
+            f"{document['reason']}；结果已写入 {out_path}（status = insufficient）",
+            details={**document["details"], "output": str(out_path)},
+        )
     return CommandResult(
         data={**document, "output": str(out_path)},
         text=_summary(document, out_path),

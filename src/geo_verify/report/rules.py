@@ -622,7 +622,12 @@ def _rule_alerts(inputs: Inputs) -> Rule:
         {key: item.get(key) for key in ("rule_id", "severity", "platform", "entity_id", "message")}
         for item in doc["alerts"]
     ]
-    details = {"alerts": alerts}
+    details: dict[str, Any] = {"alerts": alerts}
+    if doc["status"] == "insufficient":
+        # 无法比较（可比较的窗口或日期不足）：异常识别没有结论，不可判定，记为保留意见
+        details["reason"] = doc.get("reason")
+        basis = f"不可判定：异常识别无法比较（{doc.get('reason') or '可比较的窗口或日期不足'}）"
+        return Rule("R-ALERTS", title, RESERVATION, "warning", basis, details)
     if doc["status"] == "alert":
         basis = f"有 {len(alerts)} 条告警：" + "；".join(item["message"] for item in alerts)
         return Rule("R-ALERTS", title, RESERVATION, "warning", basis, details)

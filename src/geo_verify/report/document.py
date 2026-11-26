@@ -344,8 +344,12 @@ def _alerts(inputs: Inputs) -> dict[str, Any]:
     return {
         "status": doc["status"],
         "status_label": ALERT_LABELS[doc["status"]],
+        "reason": doc.get("reason"),
+        "mode": doc.get("mode"),
         "baseline_window": doc.get("baseline_window"),
         "current_window": doc.get("current_window"),
+        "baseline_date": doc.get("baseline_date"),
+        "current_date": doc.get("current_date"),
         "thresholds": doc.get("thresholds"),
         "alerts": doc["alerts"],
         "citation_changes": doc.get("citation_changes"),

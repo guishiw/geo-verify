@@ -467,6 +467,29 @@ def test_alerts_are_a_reservation_and_leads_keep_their_wording(case: Case) -> No
     assert report["alerts"]["alerts"][0]["message"] == "提及率从 0.80 降至 0.40（测试构造）"
 
 
+def test_alerts_that_could_not_compare_are_undeterminable_with_reservation(case: Case) -> None:
+    # 按 docs/outputs.md：alerts 无法比较时写出 status = insufficient 的文件
+    document = alerts_doc("clear")
+    document.update(
+        status="insufficient",
+        status_label="无法比较",
+        reason="有有效观测的窗口只有 1 个，无法比较",
+        details={"available_windows": ["W1"]},
+        baseline_window=None,
+        current_window=None,
+        citation_changes=None,
+    )
+    case.write("alerts", document)
+    report = _reserved(case, "R-ALERTS")
+    alerts_rule = rule(report, "R-ALERTS")
+    assert alerts_rule["status_label"] == "有保留"
+    assert alerts_rule["basis"].startswith("不可判定")
+    assert "窗口只有 1 个" in alerts_rule["basis"]
+    assert report["alerts"]["status"] == "insufficient"
+    assert report["alerts"]["status_label"] == "无法比较"
+    assert report["alerts"]["reason"] == "有有效观测的窗口只有 1 个，无法比较"
+
+
 @pytest.mark.parametrize("status", ["refused", "insufficient"])
 def test_compare_refused_or_insufficient_is_a_reservation(case: Case, status: str) -> None:
     case.write("compare", compare_doc(case, status))

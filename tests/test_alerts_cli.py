@@ -232,12 +232,45 @@ def test_single_window_cannot_compare(tmp_path: Path) -> None:
     assert code == 3
     assert data["error"] == "insufficient_data"
     assert data["details"]["available_windows"] == ["W1"]
-    assert not (tmp_path / "out" / "alerts.json").exists()
+    # 无法比较时也写出结果文件（status = insufficient），避免报告读到上一次运行留下的旧结论
+    assert data["details"]["output"] == str(tmp_path / "out" / "alerts.json")
+    doc = read(tmp_path / "out" / "alerts.json")
+    assert doc["kind"] == "alerts"
+    assert doc["project_id"] == "auto-demo"
+    assert doc["status"] == "insufficient"
+    assert doc["status_label"] == "无法比较"
+    assert "无法比较" in doc["reason"]
+    assert doc["details"] == {"available_windows": ["W1"]}
+    assert doc["mode"] == "window"
+    assert (doc["baseline_window"], doc["current_window"]) == (None, None)
+    assert (doc["baseline"], doc["current"]) == (None, None)
+    assert doc["available_windows"] == ["W1"]
+    assert (doc["alerts"], doc["leads"], doc["rule_summary"]) == ([], [], [])
+    assert doc["citation_changes"] is None
+    assert doc["thresholds"]["mention_drop"]["min_observations"] == 20
     code, _, err = run_cli("alerts", str(tmp_path))
     assert code == 3
     assert "无法比较" in err
     code, _ = run_cli_json("alerts", str(tmp_path), "--current-window", "W2")
     assert code == 3
+
+
+def test_insufficient_run_replaces_the_previous_result(tmp_path: Path) -> None:
+    three_windows(tmp_path)
+    _, before = run_alerts(tmp_path)
+    assert before["status"] in ("alert", "clear")
+    # 最早的窗口 B 之前没有窗口：无法比较，旧的结论必须被替换掉
+    code, data = run_cli_json("alerts", str(tmp_path), "--current-window", "B")
+    assert code == 3
+    assert data["error"] == "insufficient_data"
+    doc = read(tmp_path / "out" / "alerts.json")
+    assert doc["status"] == "insufficient"
+    assert (doc["baseline_window"], doc["current_window"]) == (None, "B")
+    assert doc["available_windows"] == ["B", "C", "A"]
+    assert doc["alerts"] == []
+    code, _, err = run_cli("alerts", str(tmp_path), "--current-window", "B")
+    assert code == 3
+    assert "status = insufficient" in err
 
 
 def test_no_observations_cannot_compare(tmp_path: Path) -> None:
@@ -348,6 +381,11 @@ def test_daily_errors(tmp_path: Path) -> None:
     code, data = run_cli_json("alerts", str(tmp_path), "--current-date", "2026-10-12")
     assert code == 3
     assert data["error"] == "insufficient_data"
+    doc = read(tmp_path / "out" / "alerts.json")
+    assert (doc["status"], doc["mode"]) == ("insufficient", "date")
+    assert (doc["baseline_date"], doc["current_date"]) == ("2026-10-11", "2026-10-12")
+    assert (doc["baseline_window"], doc["current_window"]) == (None, None)
+    assert doc["details"]["baseline_observations"] == 0
 
 
 # ---------------------------------------------------------------- 阈值覆盖

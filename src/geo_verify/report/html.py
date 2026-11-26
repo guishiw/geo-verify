@@ -372,13 +372,14 @@ def _alerts(report: dict[str, Any]) -> str:
     missing = _not_run(section, "异常识别")
     if missing:
         return _section("告警与待核查的相关线索", missing)
-    body = _kv(
-        [
-            ("状态", section["status_label"]),
-            ("基线窗口", section["baseline_window"]),
-            ("当前窗口", section["current_window"]),
-        ]
-    )
+    pairs: list[tuple[str, Any]] = [("状态", section["status_label"])]
+    if section.get("reason"):
+        pairs.append(("理由", section["reason"]))
+    if section.get("mode") == "date":
+        pairs += [("基线日", section["baseline_date"]), ("当前日", section["current_date"])]
+    else:
+        pairs += [("基线窗口", section["baseline_window"]), ("当前窗口", section["current_window"])]
+    body = _kv(pairs)
     body += "<h3>告警</h3>" + _value(section["alerts"])
     body += "<h3>待核查的相关线索</h3>"
     if section["leads"]:
