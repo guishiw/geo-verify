@@ -1,0 +1,89 @@
+# 平台配置项：OpenAI 兼容接口的接入参数（随 geo-verify 分发）。
+#
+# 下面六个平台只作配置占位，全部未核实。接口地址（base_url）、模型名（model）、
+# 联网参数（web_search_params）不得凭记忆填写，一律留空：
+# 须由人工查阅该平台文档后填写，并记录来源链接（source_url）与核对日期（checked_at），
+# 再把 verified 改为 true、status 改为 "已核实"。
+#
+# 未核实的配置不能用于真实调用：`collect --adapter openai --live --platform-config 名称`
+# 会被拒绝。未核实条目里即使填了值也不会被使用。
+# 建议复制本文件、修改副本，再用 `--platforms-file 副本路径` 指定，不要改动安装目录里的这一份。
+#
+# 每个条目的字段：
+#   display_name       显示名
+#   base_url           接口地址，写到 /v1 这一级为止（不含 /chat/completions）；未核实时留空
+#   model              模型名；未核实时留空
+#   web_search_params  开启联网（--web-search true）时并入请求体的字段，写成内联表；未核实时为 {}
+#   verified           是否已人工核实：true / false
+#   status             "未核实" 或 "已核实"，须与 verified 一致
+#   source_url         核实所依据的文档链接；未核实时留空
+#   checked_at         核对日期，YYYY-MM-DD；未核实时留空
+#   note               备注（可省）
+#
+# 本工具只提供 API 通道的调用；不提供任何网页端自动提问能力。
+
+[platforms.deepseek]
+display_name = "DeepSeek"
+base_url = ""
+model = ""
+web_search_params = {}
+verified = false
+status = "未核实"
+source_url = ""
+checked_at = ""
+note = "须由人工查阅该平台文档后填写，并记录来源链接与核对日期"
+
+[platforms.kimi]
+display_name = "Kimi"
+base_url = ""
+model = ""
+web_search_params = {}
+verified = false
+status = "未核实"
+source_url = ""
+checked_at = ""
+note = "须由人工查阅该平台文档后填写，并记录来源链接与核对日期"
+
+[platforms.yuanbao]
+display_name = "元宝"
+base_url = ""
+model = ""
+web_search_params = {}
+verified = false
+status = "未核实"
+source_url = ""
+checked_at = ""
+note = "须由人工查阅该平台文档后填写，并记录来源链接与核对日期"
+
+[platforms.doubao]
+display_name = "豆包"
+base_url = ""
+model = ""
+web_search_params = {}
+verified = false
+status = "未核实"
+source_url = ""
+checked_at = ""
+note = "须由人工查阅该平台文档后填写，并记录来源链接与核对日期"
+
+[platforms.wenxin]
+display_name = "文心"
+base_url = ""
+model = ""
+web_search_params = {}
+verified = false
+status = "未核实"
+source_url = ""
+checked_at = ""
+note = "须由人工查阅该平台文档后填写，并记录来源链接与核对日期"
+
+[platforms.qianwen]
+display_name = "千问"
+base_url = ""
+model = ""
+web_search_params = {}
+verified = false
+status = "未核实"
+source_url = ""
+checked_at = ""
+note = "须由人工查阅该平台文档后填写，并记录来源链接与核对日期"
