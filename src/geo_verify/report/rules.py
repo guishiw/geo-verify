@@ -654,14 +654,22 @@ def _rule_compare(inputs: Inputs) -> Rule:
             "基线对比样本不足，不能判定提升或下降",
             details,
         )
-    return Rule(
-        "R-COMPARE",
-        title,
-        RESERVATION,
-        "pass",
-        f"基线对比已完成（{len(doc['results'])} 项）",
-        details,
-    )
+    return Rule("R-COMPARE", title, RESERVATION, "pass", _compare_basis(doc), details)
+
+
+def _compare_basis(doc: dict[str, Any]) -> str:
+    """每个指标取主行（整体，或 --platform 指定的平台）的结论；行数不等于指标数。"""
+    main_scope = doc.get("platform")
+    metric_ids = list(dict.fromkeys(row.get("metric_id") for row in doc["results"]))
+    parts = []
+    for row in doc["results"]:
+        if row.get("platform") != main_scope:
+            continue
+        metric_id = str(row.get("metric_id"))
+        scope = "整体" if main_scope is None else f"平台 {main_scope} "
+        parts.append(f"{metric_title(metric_id)}（{metric_id}）{scope}{row.get('conclusion')}")
+    text = f"基线对比已完成（{len(metric_ids)} 个指标）"
+    return f"{text}：{'；'.join(parts)}" if parts else text
 
 
 def _rule_prompt_version(inputs: Inputs) -> Rule:

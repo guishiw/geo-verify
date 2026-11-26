@@ -490,6 +490,28 @@ def test_alerts_that_could_not_compare_are_undeterminable_with_reservation(case:
     assert report["alerts"]["reason"] == "有有效观测的窗口只有 1 个，无法比较"
 
 
+def test_compare_basis_counts_metrics_and_states_the_main_conclusion(case: Case) -> None:
+    # 联调发现：真实 compare.json 每个指标有一行整体结果，另有每个平台一行；
+    # 原来的依据“基线对比已完成（2 项）”数的是行数，读起来像比较了 2 个指标。
+    document = compare_doc(case, "ok")
+    overall = document["results"][0]
+    by_platform = copy.deepcopy(overall)
+    by_platform.update(platform="engine-a", conclusion="不能判定", conclusion_code="inconclusive")
+    document.update(platform=None, results=[overall, by_platform])
+    case.write("compare", document)
+    report = _verdict(case, "pass")
+    assert rule(report, "R-COMPARE")["basis"] == (
+        "基线对比已完成（1 个指标）：品牌提及率（mention_rate）整体提升"
+    )
+    document["platform"] = "engine-a"  # 只比较一个平台时，主行是该平台的一行
+    document["results"] = [by_platform]
+    case.write("compare", document)
+    report = _verdict(case, "pass")
+    assert rule(report, "R-COMPARE")["basis"] == (
+        "基线对比已完成（1 个指标）：品牌提及率（mention_rate）平台 engine-a 不能判定"
+    )
+
+
 @pytest.mark.parametrize("status", ["refused", "insufficient"])
 def test_compare_refused_or_insufficient_is_a_reservation(case: Case, status: str) -> None:
     case.write("compare", compare_doc(case, status))
