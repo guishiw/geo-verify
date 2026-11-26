@@ -1,0 +1,19 @@
+{
+  "synthetic": true,
+  "share_url": "https://share.ev-forum.example/s/0002",
+  "create_time": 1791507600,
+  "conversation": [
+    {"author": {"role": "human"}, "text": "澜序这个品牌怎么样？"},
+    {
+      "author": {"role": "ai"},
+      "content": {"parts": ["澜序是一个虚构的汽车品牌，", "主打纯电 SUV。[2]"]},
+      "model_slug": "engine-a-web-2026.11",
+      "sources": [
+        {"link": "https://news-auto.example/article/1", "name": "新闻（虚构）"},
+        {"href": "https://lanxu-auto.example/", "name": "  "},
+        {"name": "没有链接的来源"},
+        {"url": "https://gov-data.example/data/7", "placement": "inline"}
+      ]
+    }
+  ]
+}

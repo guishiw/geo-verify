@@ -1,0 +1,23 @@
+{
+  "synthetic": true,
+  "title": "澜序 S7 续航（虚构分享样例）",
+  "url": "https://share.ev-forum.example/s/0001",
+  "saved_at": "2026-10-08T10:00:00+08:00",
+  "model": "engine-a-web-2026.10",
+  "messages": [
+    {"role": "system", "content": "你是一个乐于助人的助手。"},
+    {"role": "user", "content": "你好"},
+    {"role": "assistant", "content": "你好，请问有什么可以帮你？"},
+    {"role": "user", "content": "澜序 S7 的续航是多少公里？"},
+    {
+      "role": "assistant",
+      "content": "澜序 S7 长续航版的 CLTC 续航为 620 km[1]，WLTC 续航为 540 km。详见 https://auto-review.example/review/2002 。（虚构回答）"
+    }
+  ],
+  "citations": [
+    "https://lanxu-auto.example/s7/spec",
+    {"url": "https://auto-review.example/review/2002", "title": "评测（虚构）"},
+    {"url": "https://gov-data.example/data/1001", "title": "公共数据（虚构）"},
+    "https://lanxu-auto.example/s7/spec"
+  ]
+}

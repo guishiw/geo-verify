@@ -11,16 +11,14 @@ from __future__ import annotations
 import argparse
 
 from geo_verify.cli import CommandResult, SubParsers, add_command
-from geo_verify.collect import manual, openai_compat
+from geo_verify.collect import manual, openai_compat, share
 from geo_verify.collect.adapter import AdapterSpec, reject_options
 from geo_verify.errors import InputError
 
-_IMPLEMENTED: tuple[AdapterSpec, ...] = (manual.ADAPTER, openai_compat.ADAPTER)
+_IMPLEMENTED: tuple[AdapterSpec, ...] = (manual.ADAPTER, openai_compat.ADAPTER, share.ADAPTER)
 ADAPTERS: dict[str, AdapterSpec] = {spec.name: spec for spec in _IMPLEMENTED}
 # 接口文档里已约定、尚未落地的适配器：选用时给出明确的输入错误，而不是“未知参数”。
-PLANNED: dict[str, str] = {
-    "share": "已保存的分享数据导入",
-}
+PLANNED: dict[str, str] = {}
 # 各适配器自己注册的参数（如 manual 的 --action），注册解析器时记录
 OWN_OPTIONS: dict[str, tuple[str, ...]] = {}
 
@@ -50,7 +48,7 @@ def register(subparsers: SubParsers) -> None:
         subparsers,
         "collect",
         run,
-        help="采集观测：按 --adapter 选择适配器（manual=人工采集包，openai=OpenAI 兼容接口）",
+        help="采集观测：按 --adapter 选择适配器（manual=人工采集包，openai=OpenAI 兼容接口，share=分享数据导入）",
     )
     parser.add_argument("project", help="项目目录")
     parser.add_argument(

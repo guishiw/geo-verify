@@ -139,3 +139,97 @@ snapshots_written, audit_event_id, warnings []
 另加 `interrupted`。没有新写入时不写审计事件。
 
 API 通道的数据只反映接口返回的内容，与网页端、应用端看到的可能不同。
+
+## `--adapter share`：已保存的分享数据导入
+
+```text
+collect PROJECT --adapter share --input FILE --platform ID --window W --query QUERY_ID
+        [--attempt N] [--entry-form web|app|mini_program|plugin|other] [--operator NAME] [--now T]
+```
+
+只解析使用者提供的**本地文件**：不联网，不访问文件里的任何链接，不执行脚本，不加载外部资源。
+一次导入一个文件，对应封存题库中 `--query` 指明的题目、同一窗口内的第 `--attempt` 次（默认 1）。
+平台须在 `project.json` 中登记 `share_import` 通道。`--repeats`、`--queries` 不适用，给出时报错。
+
+### 文件格式
+
+按扩展名判断（`.json`；`.html` `.htm` `.xhtml`），没有可识别的扩展名时按内容判断（以 `{` 或 `[` 开头为 JSON，
+以 `<` 开头为 HTML）。不支持 MHTML（`.mhtml` `.mht`），请另存为“网页，仅 HTML”或导出 JSON。
+
+**JSON**（UTF-8）：
+
+```json
+{"messages": [{"role": "user", "content": "…"}, {"role": "assistant", "content": "…"}],
+ "model": "…", "citations": ["https://…", {"url": "https://…", "title": "…"}],
+ "url": "分享页地址", "saved_at": "2026-10-08T10:00:00+08:00"}
+```
+
+兼容的别名（取第一个出现的）：
+
+| 含义 | 字段名 |
+|---|---|
+| 消息列表 | `messages` `conversation` `chat_messages`；顶层也可以直接是消息列表 |
+| 角色 | `role` `author` `sender`（值可以是 `{"role": …}`）；`user` `human` 为提问，`assistant` `ai` `bot` `model` 为回答，其他角色（如 system、tool）忽略 |
+| 内容 | `content` `text`；可以是文本、内容片段列表（文本或 `{"text": …}`，其他片段如图片忽略）、`{"parts": [...]}` 或 `{"text": …}` |
+| 模型 | `model` `model_slug` `model_version`；回答消息上的优先于顶层 |
+| 引用 | `citations` `sources` `references`；回答消息上的优先于顶层。元素为 URL 文本，或含 `url` / `link` / `href`、`title` / `name`、可选 `placement` 的对象 |
+| 分享页地址 | `url` `share_url` `link`（只记录，不访问） |
+| 保存时间 | `saved_at` `exported_at` `created_at` `create_time`；带时区的 ISO 8601 文本或 Unix 秒 |
+
+**HTML**（尽力而为的解析）：用标准库 `html.parser` 读取，规则如下。
+
+- 消息：带角色标记的元素，即属性 `data-message-author-role`、`data-role`、`data-author` 或 `data-sender`
+  的值为上表中的提问或回答角色。嵌套在另一条消息里的角色标记不再切分。没有任何角色标记的页面无法导入。
+- 可见正文：跳过 `script` `style` `noscript` `template` `head` `svg` `button` `select` `textarea`
+  `iframe` `object` `canvas` 元素，带 `hidden` 属性、`aria-hidden="true"`、或内联样式含
+  `display:none` / `visibility:hidden` 的元素（及其全部子元素），以及注释。块级元素和 `<br>` 处换行；
+  每行内连续空白合并为一个空格，空行去掉。消息元素之外的文字（导航、页脚等）不计入。
+- 引用：回答消息内可见的 `<a href>`，只收 `http://`、`https://` 链接（其他如 `javascript:`、相对链接跳过并计数）。
+  链接文字作标题，没有文字时取 `title` 属性。位于来源区——`data-role` / `data-section` 为
+  `sources` `citations` `references` 的元素，或 `<aside>`——的链接为 `source_list`，其余为 `inline`；
+  来源区里的文字不计入回答正文。重复链接原样保留。
+- 模型：回答元素的 `data-model` 或 `data-message-model-slug` 属性。
+- 分享页地址：`<link rel="canonical">`，其次 `<meta property="og:url">`。保存时间：`<meta name="saved_at">`（或 `saved-at`）。
+- 编码：先按 UTF-8，失败时按 `<meta charset>` 声明的编码。
+- 不处理浏览器的隐式闭合规则、CSS 类样式和脚本生成的内容；复杂页面建议导出 JSON 再导入。
+
+### 写成观测
+
+- 取最后一组“用户提问 + 助手回答”：最后一条回答，配它之前最近的一条提问。之前还有对话消息时，
+  `ext.share.prior_messages` 记条数，`null_reasons.history_cleared` 和警告里都会提示回答可能受前文影响。
+- `prompt_text` 是**文件中的实际提问原文**。它与封存题目原文不一致（忽略空白差异后比较）时照样导入，
+  输出 `prompt_text_differs: true`，警告排在第一条（文本输出的第一行），`ext.share.prompt_matches_sealed = false`。
+- `channel = share_import`，`entry_form` 默认 `web`（`--entry-form` 可改，不能为 `api`）。
+- 是否登录、是否清除历史、是否联网、地域、设备一律 `null` 并写原因；文件没有模型版本时 `model_version` 为 `null`，
+  `entry_features` 注明。
+- 回答为空 → 无效观测 `empty_answer`；乱码（同 openai 的判定）→ `garbled`；否则有效。
+- 引用位置：文件明确给出的 `placement` 为准；否则正文出现 `[n]`（n 为该条在文件引用列表中的序号）或该链接时为
+  `inline`，否则为 `source_list`。HTML 按上面的来源区规则。
+- 时间：`started_at = ended_at = 文件中的保存时间`，`ext.share.time_source = "saved_at"`，`time_field` 记字段名
+  （HTML 为 `meta:saved_at`）。文件里没有、或时间缺少时区、格式不对时，取导入时间（`--now`，没给则当前时间），
+  `time_source = "import_time"`，`ext.share.time_note` 写明“时间为导入时间，非采集时间”，并给出警告。
+- 原文件原样复制为 `snapshots/<observation_id>/<文件名>` 并记录 SHA-256；已有同名同内容文件时复用，内容不同时改用
+  `<文件名主干>.2<扩展名>`，任何已有文件都不覆盖。
+- `ext.share`：`format`、`source_file`（文件名）、`source_sha256`、`share_url`、`time_source`、`time_field`、`time_note`、
+  `prompt_matches_sealed`、`prior_messages`，有跳过的引用条目时另有 `citations_skipped`。
+
+### 去重
+
+- `trace_id` 由（项目、题库哈希、平台、通道 `share_import`、窗口、题目、次数）确定生成。
+- 同一文件以同一任务再次导入：跳过（`skipped_existing = 1`），退出 0，不写审计事件。
+- 同一任务已有来自另一个文件的记录：拒绝（退出 2），提示用新的 `--attempt`；观测写入后不可覆盖。
+- 同一文件（按 SHA-256）已导入为别的任务：拒绝（退出 2），避免重复计数。
+
+### 输出与审计
+
+`--json` 输出：`adapter "share"`、`channel "share_import"`、`input`（文件名）、`format`、`platform`、`window_id`、
+`query_id`、`attempt`、`prompt_set_version`、`prompt_set_hash`、`trace_id`、`observation_id`、`written`、
+`skipped_existing`、`status`、`invalid_reason`、`audit_event_id`、`warnings`；写入时另有 `entry_form`、
+`prompt_text_differs`、`time_source`、`citations`（条数）、`share_url`、`prior_messages`、`snapshot`（快照相对路径）。
+
+写入后追加一条 `action = import` 的审计事件：`target = {type: "observations", id: <文件名>}`，`actor` 取 `--operator`，
+缺省为“geo-verify collect（未指明操作人）”，时间取 `--now`（没给则当前时间）；`details` 含 `adapter`、`channel`、
+`source_file`、`source_sha256`、`format`、`platform`、`window_id`、`query_id`、`attempt`、`observation_id`、`status`、
+`prompt_text_differs`、`time_source`。
+
+本适配器不提供浏览器自动化，也不抓取分享链接。
