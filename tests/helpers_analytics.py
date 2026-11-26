@@ -77,3 +77,50 @@ def per_query(
         bucket[0] += hit(position, hits, total)
         bucket[1] += 1
     return {query: (counts[query][0], counts[query][1]) for query in sorted(counts)}
+
+
+def add_query_counts(
+    b: Builder,
+    platform: str,
+    channel: str,
+    counts: dict[str, tuple[int, int]],
+    *,
+    windows: tuple[str, ...] = WINDOWS,
+    flag: str = "mentioned",
+    **fields: Any,
+) -> list[dict[str, Any]]:
+    """按题给定（命中数, 次数）追加有效观测：每题的各次提问依次落在各窗口。
+
+    flag = "mentioned"：命中即“提及目标主体”；
+    flag = "negative"：全部提及，命中即“含无依据的负面”（负面误引）。
+    """
+    added = []
+    fields.setdefault("model_version", None if channel == "manual" else f"{platform}-2026.10")
+    for query, (hits, total) in counts.items():
+        for position in range(total):
+            window = windows[position % len(windows)]
+            attempt = position // len(windows) + 1
+            flagged = hit(position, hits, total)
+            if flag == "mentioned":
+                options: dict[str, Any] = {"mentioned": flagged}
+            else:
+                options = {
+                    "mentioned": True,
+                    "ann": {
+                        "risk": {"unfounded_negative": flagged},
+                        "sentiment": "negative" if flagged else "neutral",
+                    },
+                }
+            added.append(
+                b.obs(
+                    query,
+                    platform,
+                    window,
+                    channel=channel,
+                    attempt=attempt,
+                    started_at=utc(WINDOW_DAYS[window], 2 + attempt % 20),
+                    **options,
+                    **fields,
+                )
+            )
+    return added
