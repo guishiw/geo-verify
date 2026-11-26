@@ -39,7 +39,7 @@ test: $(BIN)/python
 check: lint type test
 
 perf: $(BIN)/python
-	$(BIN)/python -m pytest perf -q -p no:cacheprovider --no-cov -o testpaths=perf
+	$(BIN)/python -m pytest perf -p no:cacheprovider --no-cov -o testpaths=perf
 
 format: $(BIN)/python
 	$(BIN)/ruff check --fix .
