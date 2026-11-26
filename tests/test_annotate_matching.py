@@ -163,6 +163,33 @@ def test_circled_list_markers_do_not_block_alphanumeric_word_boundary(
     assert spans(matcher, text) == expected
 
 
+SHARP_S = chr(0xDF)  # ß，casefold 后展开为两个字符 "ss"
+
+
+@pytest.mark.parametrize("text", [f"{SHARP_S}7 很省电", f"推荐{SHARP_S}7", f"X{SHARP_S}7"])
+def test_alias_cannot_start_inside_a_character_that_folds_to_several(
+    matcher: EntityMatcher, text: str
+) -> None:
+    # 原文“ß7”规范化为“ss7”：别名“s7”只覆盖了“ß”展开后的后半个字符，原文里并没有 S7
+    assert spans(matcher, text) == []
+
+
+def test_alias_cannot_end_inside_a_character_that_folds_to_several() -> None:
+    # 原文“Aß”规范化为“ass”：别名“AS”只盖住“ß”的前半个字符，不算命中
+    custom = EntityMatcher([entity("brand-as", "AS", aliases=("AS",), kind="brand")])
+    assert spans(custom, f"A{SHARP_S} 很好") == []
+    assert spans(custom, "AS 很好") == [("brand-as", 0, 2)]
+
+
+def test_character_that_folds_to_several_still_matches_when_whole() -> None:
+    # 别名本身含 ß 时，整个字符参与匹配仍然命中，span 指回原文的整个字符
+    custom = EntityMatcher([entity("brand-gross", "Groß", aliases=("Groß",), kind="brand")])
+    assert spans(custom, "选 GROSS 还是 Groß？") == [
+        ("brand-gross", 2, 7),
+        ("brand-gross", 11, 15),
+    ]
+
+
 @pytest.mark.parametrize("text", ["1S7 很省电", "１S7 很省电", "2LANXU 很省电"])
 def test_decimal_digits_still_enforce_word_boundary(matcher: EntityMatcher, text: str) -> None:
     assert spans(matcher, text) == []

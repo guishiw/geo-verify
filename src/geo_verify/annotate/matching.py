@@ -205,6 +205,13 @@ class EntityMatcher:
         for alias in self._aliases:
             for position in _occurrences(normalized.text, alias.key):
                 stop = position + len(alias.key)
+                # 命中必须覆盖整个原文字符：一个字符规范化后展开为多个（如 ß → ss）时，
+                # 别名不能从它的中间开始或在它的中间结束
+                starts = normalized.starts
+                if position > 0 and starts[position - 1] == starts[position]:
+                    continue
+                if stop < len(starts) and starts[stop] == starts[stop - 1]:
+                    continue
                 start, end = normalized.starts[position], normalized.ends[stop - 1]
                 if alias.head_is_word and start > 0 and is_word_char(text[start - 1]):
                     continue

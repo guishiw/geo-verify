@@ -12,7 +12,7 @@ from functools import cache
 
 from helpers_annotate import NOW, auto_annotator, fullwidth
 from helpers_basic import auto_entities
-from hypothesis import given, settings
+from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
 from geo_verify import spec
@@ -157,6 +157,7 @@ def test_generated_answers_give_consistent_valid_annotations(text: str) -> None:
 
 @settings(max_examples=150, deadline=None)
 @given(st.text(max_size=80))
+@example("ß7")  # 复核时 hypothesis 找到的反例：casefold 展开的字符被当成别名的一部分
 def test_arbitrary_text_gives_valid_annotations(text: str) -> None:
     for result in auto_annotator().judge(text).values():
         check_judgment(text, result)
