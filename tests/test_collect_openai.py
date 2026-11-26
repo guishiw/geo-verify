@@ -820,6 +820,20 @@ def test_live_requires_base_url_key_env_and_model(root: Path, fake_live: list[st
     assert project.load_observations(root) == []
 
 
+def test_full_live_parameters_without_live_flag_never_reach_the_network(
+    root: Path, fake_live: list[str]
+) -> None:
+    """R2：地址、密钥变量、模型都给齐，只要没写 --live，也不得走真实传输。"""
+    code, data = live(
+        root, "--base-url", "https://api.example.test/v1", "--api-key-env", KEY_ENV,
+        "--model", "m",
+    )  # fmt: skip
+    assert code == 2, data
+    assert "--live" in data["message"]
+    assert fake_live == []
+    assert project.load_observations(root) == []
+
+
 def test_live_run_uses_the_real_transport(root: Path, fake_live: list[str]) -> None:
     base = "https://api.example.test/normal/v1"
     code, data = live(
