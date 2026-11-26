@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 import factory
+import helpers_recheck
 import pytest
 from conftest import run_cli, run_cli_json
 from factory import COMPETITOR, TARGET
@@ -208,7 +209,7 @@ def test_only_valid_observations_with_effective_annotations_become_items(root: P
     target_row = next(row for row in rows if row["entity_id"] == TARGET)
     assert target_row["original_mentioned"] == "false"
     assert target_row["original_recommended"] == "false"
-    assert target_row["original_rank"] == ""
+    assert target_row["original_rank"] == "null"  # 无位次写成 null，见 round_trips 测试
 
 
 def test_duplicate_observation_ids_are_listed_once(root: Path) -> None:
@@ -566,3 +567,39 @@ def test_missing_project_or_unsealed_prompts_exit_2(tmp_path: Path) -> None:
     code, data = _plan(unsealed)
     assert code == 2
     assert "尚未封存" in data["message"]
+
+
+def _no_rank_fields(observation: dict[str, Any], entity_id: str) -> dict[str, Any] | None:
+    """目标品牌未被提及（无位次）；竞品被提及、无位次（推荐稍后改为拿不准的 null）。"""
+    if entity_id == TARGET:
+        return {"mentioned": False, "recommended": False, "rankable": False, "rank": None}
+    return {"mentioned": True, "rankable": False, "rank": None}
+
+
+def test_plan_csv_spells_missing_values_so_copying_originals_round_trips(
+    root: Path, tmp_path: Path
+) -> None:
+    # 联调发现：原值为 null 时复核表里是空单元格，复核人照抄原值后 recheck-compare
+    # 把空的 recheck_rank 当成“没填”，整行判为不完整。复核表必须把“无位次 / 未判断”写成 null。
+    built = build_project(root, queries=5, per_query=2, fields=_no_rank_fields, write=False)
+    for annotation in built.annotations:
+        if annotation["entity_id"] == COMPETITOR:
+            annotation["recommended"] = None  # 规则拿不准时就是 null
+    factory.write_records(root, observations=built.observations, annotations=built.annotations)
+    assert _plan(root)[0] == 0
+    header, rows = read_csv(root / "recheck" / "plan.csv")
+    assert len(rows) == 4  # 1 题 × 2 次 × 2 个实体
+    for row in rows:
+        assert row["original_rank"] == "null"
+        expected = "false" if row["entity_id"] == TARGET else "null"
+        assert row["original_recommended"] == expected
+        for field in ("mentioned", "recommended", "rank"):
+            row[f"recheck_{field}"] = row[f"original_{field}"]
+    filled = tmp_path / "filled.csv"
+    helpers_recheck.write_csv(filled, header, rows)
+
+    code, data = run_cli_json("recheck-compare", str(root), "--input", str(filled))
+
+    assert code == 0
+    assert data["errors"] == []
+    assert (data["planned"], data["checked"], data["agreed"], data["not_checked"]) == (4, 4, 4, 0)

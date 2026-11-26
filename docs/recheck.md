@@ -29,7 +29,7 @@ UTF-8 BOM、CRLF；以 `=`、`+`、`-`、`@`、制表符、回车开头的单元
 
 `observation_id, entity_id, entity_name, query_id, platform, source, prompt_text, answer_text, original_mentioned, original_recommended, original_rank, recheck_mentioned, recheck_recommended, recheck_rank, recheck_note`
 
-复核人只填 `recheck_*` 四列，另存为“CSV UTF-8”。
+复核人只填 `recheck_*` 四列，另存为“CSV UTF-8”。原标注的推荐为“未判断”、或没有位次时，`original_recommended` / `original_rank` 写作 `null`（不留空）；复核人认同时照抄 `null` 即可——复核列留空表示“未复核”。
 
 ## 比对
 

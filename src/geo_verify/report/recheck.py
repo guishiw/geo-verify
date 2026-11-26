@@ -32,6 +32,8 @@ FIELDS: tuple[str, ...] = ("mentioned", "recommended", "rank")
 SOURCES: tuple[str, ...] = ("sample", "dispute")
 PLAN_PATH = "recheck/plan.json"
 PLAN_CSV_PATH = "recheck/plan.csv"
+# 复核表里原值为 null 时的写法（recheck-compare 认可 null、none、n/a、无）
+NULL_CELL = "null"
 RESULT_PATH = "recheck/result.json"
 DISPUTES_PATH = "out/disputes.json"
 SAMPLING_METHOD = "sha256_rank"
@@ -452,13 +454,22 @@ def _csv_row(data: ProjectData, item: Mapping[str, Any]) -> list[Any]:
         observation.get("prompt_text"),
         observation.get("answer_text"),
         annotation.get("mentioned"),
-        annotation.get("recommended"),
-        annotation.get("rank"),
+        _spelled(annotation.get("recommended")),
+        _spelled(annotation.get("rank")),
         None,
         None,
         None,
         None,
     ]
+
+
+def _spelled(value: Any) -> Any:
+    """原标注里的 null（推荐未判断、无位次）写成 `null`，不留空单元格。
+
+    复核列留空表示“未复核”；原值列若也留空，复核人照抄原值时就分不清“无位次”和“没填”，
+    recheck-compare 会把整行判为不完整。`null` 是 recheck-compare 认可的写法之一。
+    """
+    return NULL_CELL if value is None else value
 
 
 @dataclass(frozen=True)
