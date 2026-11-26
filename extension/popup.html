@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>保存所选回答</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<header>
+<h1>保存所选回答</h1>
+<p class="boundary">只在你点击时读取当前页面上你自己选中的文字和其中的链接；不自动提问、不自动翻页、不联网，文件只保存在本机。</p>
+</header>
+
+<section>
+<p class="step">第一步：在页面上选中要保存的回答，然后点：</p>
+<button id="read-selection" type="button">读取所选内容</button>
+<p id="read-status" class="status" role="status"></p>
+</section>
+
+<section id="preview" hidden>
+<h2>预览（只读）</h2>
+<dl>
+<dt>页面标题</dt>
+<dd id="preview-title"></dd>
+<dt>页面地址</dt>
+<dd id="preview-url"></dd>
+</dl>
+<h3>选中的回答</h3>
+<pre id="preview-text"></pre>
+<h3>选区内的链接</h3>
+<ul id="preview-links"></ul>
+<p id="preview-links-note" class="note"></p>
+</section>
+
+<section>
+<p class="step">第二步：手工填写。只有实际提问原文必填；不知道的项留空或选“未知”，留空的项导出为 null。</p>
+<div class="field">
+<label for="f-prompt">实际提问原文（必填，照实际发出的原文填写）</label>
+<textarea id="f-prompt" rows="3" required></textarea>
+</div>
+<div class="field">
+<label for="f-platform">平台编号</label>
+<input id="f-platform" type="text" autocomplete="off" placeholder="如 engine-a">
+</div>
+<div class="field">
+<label for="f-window-id">时间窗口</label>
+<input id="f-window-id" type="text" autocomplete="off" placeholder="如 W1">
+</div>
+<div class="field">
+<label for="f-query-id">题目编号</label>
+<input id="f-query-id" type="text" autocomplete="off" placeholder="如 Q001">
+</div>
+<div class="field">
+<label for="f-model">模型或产品版本</label>
+<input id="f-model" type="text" autocomplete="off" placeholder="页面上能看到版本时填写">
+</div>
+<div class="field">
+<label for="f-entry-features">入口特征（版本未知时填写）</label>
+<input id="f-entry-features" type="text" autocomplete="off" placeholder="如 网页端默认模式">
+</div>
+<div class="field">
+<label for="f-logged-in">是否登录</label>
+<select id="f-logged-in">
+<option value="unknown">未知</option>
+<option value="yes">是</option>
+<option value="no">否</option>
+</select>
+</div>
+<div class="field">
+<label for="f-history-cleared">是否清除历史</label>
+<select id="f-history-cleared">
+<option value="unknown">未知</option>
+<option value="yes">是</option>
+<option value="no">否</option>
+</select>
+</div>
+<div class="field">
+<label for="f-web-search">是否联网（指被测产品回答时是否联网检索）</label>
+<select id="f-web-search">
+<option value="unknown">未知</option>
+<option value="yes">是</option>
+<option value="no">否</option>
+</select>
+</div>
+<div class="field">
+<label for="f-region">地域</label>
+<input id="f-region" type="text" autocomplete="off">
+</div>
+<div class="field">
+<label for="f-device">设备</label>
+<input id="f-device" type="text" autocomplete="off" placeholder="如 桌面浏览器">
+</div>
+<div class="field">
+<label for="f-operator">采集人</label>
+<input id="f-operator" type="text" autocomplete="off">
+</div>
+</section>
+
+<section>
+<p class="step">第三步：保存。文件里的时间是你点击保存时的本机时间（保存时间），不是提问时间。</p>
+<a id="save-file" class="button" href="#" download>保存为文件</a>
+<p id="save-status" class="status" role="status"></p>
+</section>
+
+<script src="lib/page.js"></script>
+<script src="lib/capture.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>
