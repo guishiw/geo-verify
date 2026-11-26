@@ -122,7 +122,8 @@ PROJECT/
   真实调用必须显式 `--live --base-url URL --api-key-env 变量名`；密钥只从环境变量读取。
 - `--adapter manual --action pack --platform ID --window W [--repeats N] --out DIR` 生成人工采集任务清单；
   `--adapter manual --action fill --input FILE` 把人工回填的回答、引用和快照导入为观测（`channel = manual`）。
-- `--adapter share --input FILE --platform ID --window W`（P1）解析用户提供的本地分享文件，不联网。
+- `--adapter share --input FILE --platform ID --window W --query QUERY_ID [--attempt N] [--entry-form F]`（P1）解析用户提供的本地分享文件（JSON / HTML），不联网，`channel = share_import`；
+  浏览器辅助插件导出的 `geo-verify-capture/1` 文件同样用此命令导入，`channel = browser_assist`，环境字段取文件内容，保存时间如实记为开始、结束时间（详见 [collect.md](collect.md)）。
 
 ### `annotate rules PROJECT [--now T]`
 

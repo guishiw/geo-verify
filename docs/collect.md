@@ -149,7 +149,7 @@ collect PROJECT --adapter share --input FILE --platform ID --window W --query QU
 
 只解析使用者提供的**本地文件**：不联网，不访问文件里的任何链接，不执行脚本，不加载外部资源。
 一次导入一个文件，对应封存题库中 `--query` 指明的题目、同一窗口内的第 `--attempt` 次（默认 1）。
-平台须在 `project.json` 中登记 `share_import` 通道。`--repeats`、`--queries` 不适用，给出时报错。
+平台须在 `project.json` 中登记 `share_import` 通道（浏览器辅助插件导出的文件为 `browser_assist`，见下文）。`--repeats`、`--queries` 不适用，给出时报错。
 
 ### 文件格式
 
@@ -192,6 +192,29 @@ collect PROJECT --adapter share --input FILE --platform ID --window W --query QU
 - 分享页地址：`<link rel="canonical">`，其次 `<meta property="og:url">`。保存时间：`<meta name="saved_at">`（或 `saved-at`）。
 - 编码：先按 UTF-8，失败时按 `<meta charset>` 声明的编码。
 - 不处理浏览器的隐式闭合规则、CSS 类样式和脚本生成的内容；复杂页面建议导出 JSON 再导入。
+
+### 浏览器辅助插件导出的文件（`geo-verify-capture/1`）
+
+JSON 顶层 `format` 为 `geo-verify-capture/1` 的文件（格式见 [extension/FORMAT.md](../extension/FORMAT.md)）按插件的固定格式读取，
+与上面的通用 JSON 有以下不同：
+
+- 观测的 `channel = browser_assist`（平台须在 `project.json` 中登记该通道，`trace_id` 也按此通道生成）。
+- 结构按 FORMAT.md 严格检查，不符合即为输入错误（退出 2）：`capture` 须为 `browser_assist`；`messages` 恰好两条、先 `user` 后 `assistant`；
+  `environment` 为对象，`entry_form` 不能为 `api`，`logged_in` / `history_cleared` / `web_search` 只能是 `true`、`false` 或 `null`；
+  其余各项为文本或 `null`。`format` 是 `geo-verify-capture/` 的其他版本时拒绝导入。
+- `entry_form`、`entry_features`、`logged_in`、`history_cleared`、`web_search`、`region`、`device` 取文件中的 `environment`；
+  `model` → `model_version`，`operator` → `operator`，`sources` → `citations`（位置按上面的通用规则判断：插件只保存选区内的链接，
+  分不清正文引用与来源列表）。文件里为 `null`（采集人未填写）的项保持 `null`，`null_reasons` 写“浏览器辅助采集：采集人未填写…”；
+  没有入口特征时 `entry_features` 写明“采集人未填写入口特征”。
+- 时间：`saved_at` 是**用户点击保存的时间**，如实记为 `started_at = ended_at`，`ext.share.time_source = "saved_at"`，
+  `ext.share.time_note = "时间为用户点击保存的时间，非提问时间"`。观测契约的 `null_reasons` 不允许 `started_at` 键，
+  所以这条说明只写在 `ext.share`。`saved_at` 无法使用时同通用规则，改用导入时间并给出警告。
+- 文件里手工填写的 `platform`、`window_id`、`query_id` 与命令行 `--platform`、`--window`、`--query` 不一致时**以命令行为准**，
+  每一处给一条警告；文件里没填（`null`）不算不一致。`--entry-form`、`--operator` 显式给出且与文件不同时同样以命令行为准并警告。
+- `ext.share.format = "geo-verify-capture/1"`，`ext.share.share_url = null`，另有
+  `ext.share.capture = {page_url, page_title, file_ids: {platform, window_id, query_id}, mismatched: [不一致的键]}`
+  （`page_url` 是读取时的页面地址，只记录，不访问）。`--json` 输出的 `channel` 为 `browser_assist`、`format` 为
+  `geo-verify-capture/1`，另有 `page_url`。审计事件的 `details.channel`、`details.format` 同上，`actor` 缺省取文件中的 `operator`。
 
 ### 写成观测
 

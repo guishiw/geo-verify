@@ -9,7 +9,9 @@
 - HTML：使用者自己另存的分享页。用标准库 html.parser 提取可见正文与 `<a href>` 链接，
   按元素上的角色标记（如 `data-message-author-role`）切分提问与回答。这是尽力而为的解析。
 
-取最后一组“用户提问 + 助手回答”写成一条观测（channel = share_import）。提问原文与封存题目
+取最后一组“用户提问 + 助手回答”写成一条观测（channel = share_import）。浏览器辅助插件导出的
+文件（JSON，`"format": "geo-verify-capture/1"`，见 extension/FORMAT.md）按其固定格式读取，观测通道为
+browser_assist，入口形态与环境字段取文件中的 environment。提问原文与封存题目
 不一致时照样导入，prompt_text 记录文件中的实际提问原文，并给出明显的警告。
 文件里拿不到的环境字段一律为 null 并写明原因；文件里没有可用的保存时间时，开始和结束时间
 取导入时间（--now 或当前时间），并在 ext.share 注明“时间为导入时间，非采集时间”。
@@ -49,6 +51,18 @@ from geo_verify.timeutil import format_utc, parse_utc
 
 NAME = "share"
 CHANNEL = "share_import"
+BROWSER_CHANNEL = "browser_assist"
+CAPTURE_FORMAT = "geo-verify-capture/1"
+CAPTURE_PREFIX = "geo-verify-capture/"
+CAPTURE_TIME_NOTE = "时间为用户点击保存的时间，非提问时间"
+CAPTURE_IDS: tuple[tuple[str, str], ...] = (
+    ("platform", "--platform"),
+    ("window_id", "--window"),
+    ("query_id", "--query"),
+)
+CAPTURE_TRI_STATE = ("logged_in", "history_cleared", "web_search")
+CAPTURE_ENV_TEXT = ("entry_features", "region", "device")
+ENVIRONMENT_FIELDS = ("logged_in", "history_cleared", "web_search", "region", "device")
 DEFAULT_ENTRY_FORM = "web"
 SHARE_ENTRY_FORMS: tuple[str, ...] = tuple(item for item in ENTRY_FORMS if item != "api")
 SNAPSHOTS_DIR = "snapshots"
@@ -163,6 +177,13 @@ _NULL_REASONS = {
     "web_search": "分享数据导入：文件不包含是否联网",
     "region": "分享数据导入：文件不包含地域",
     "device": "分享数据导入：文件不包含设备",
+}
+_CAPTURE_NULL_REASONS = {
+    "logged_in": "浏览器辅助采集：采集人未填写是否登录",
+    "history_cleared": "浏览器辅助采集：采集人未填写是否清除历史",
+    "web_search": "浏览器辅助采集：采集人未填写是否联网",
+    "region": "浏览器辅助采集：采集人未填写地域",
+    "device": "浏览器辅助采集：采集人未填写设备",
 }
 
 
@@ -311,11 +332,14 @@ def _json_citations(data: dict[str, Any]) -> tuple[list[RawCitation] | None, int
     return citations, skipped
 
 
-def parse_json(text: str, name: str = "文件") -> Parsed:
+def load_json(text: str, name: str = "文件") -> Any:
     try:
-        data = json.loads(text)
+        return json.loads(text)
     except json.JSONDecodeError as exc:
         raise InputError(f"{name} 不是合法的 JSON：{exc.msg}（第 {exc.lineno} 行）") from None
+
+
+def parse_json_data(data: Any, name: str = "文件") -> Parsed:
     top: dict[str, Any]
     if isinstance(data, list):
         top, items = {}, data
@@ -354,6 +378,75 @@ def parse_json(text: str, name: str = "文件") -> Parsed:
         saved_value=top.get(saved_field) if saved_field else None,
         citations=citations or [],
         citations_skipped=skipped,
+    )
+
+
+@dataclass(frozen=True)
+class Capture:
+    """浏览器辅助插件导出文件（geo-verify-capture/1）中 parse_json_data 之外的字段。"""
+
+    page_url: str | None
+    page_title: str | None
+    ids: dict[str, str | None]  # 文件里手工填写的 platform、window_id、query_id
+    environment: dict[str, Any]  # entry_form 与 CAPTURE_TRI_STATE、CAPTURE_ENV_TEXT 各项
+    operator: str | None
+
+
+def _optional_text(data: dict[str, Any], key: str, label: str) -> str | None:
+    value = data.get(key)
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise InputError(f"{label} 应为文本或 null：{value!r}")
+    return value.strip() or None
+
+
+def read_capture(data: Any, name: str) -> Capture | None:
+    """识别插件导出文件；不是插件格式时返回 None。字段不合 FORMAT.md 的约定时为输入错误。"""
+    if not isinstance(data, dict):
+        return None
+    declared = data.get("format")
+    if not isinstance(declared, str) or not declared.startswith(CAPTURE_PREFIX):
+        return None
+    if declared != CAPTURE_FORMAT:
+        raise InputError(f"{name} 的格式 {declared} 不受支持：本版本只能导入 {CAPTURE_FORMAT}")
+    where = f"{name}（{CAPTURE_FORMAT}）"
+    if data.get("capture") != BROWSER_CHANNEL:
+        raise InputError(f"{where} 的 capture 应为 {BROWSER_CHANNEL}：{data.get('capture')!r}")
+    messages = data.get("messages")
+    roles = (
+        [item.get("role") if isinstance(item, dict) else None for item in messages]
+        if isinstance(messages, list)
+        else None
+    )
+    if roles != ["user", "assistant"]:
+        raise InputError(f"{where} 的 messages 应恰好两条：先 user，后 assistant")
+    environment = data.get("environment")
+    if not isinstance(environment, dict):
+        raise InputError(f"{where} 的 environment 应为对象")
+    entry_form = environment.get("entry_form")
+    if entry_form not in SHARE_ENTRY_FORMS:
+        raise InputError(
+            f"{where} 的 environment.entry_form 应为 {' / '.join(SHARE_ENTRY_FORMS)} 之一："
+            f"{entry_form!r}"
+        )
+    values: dict[str, Any] = {"entry_form": entry_form}
+    for key in CAPTURE_TRI_STATE:
+        value = environment.get(key)
+        if value is not None and not isinstance(value, bool):
+            raise InputError(
+                f"{where} 的 environment.{key} 只能是 true、false 或 null（未知）：{value!r}"
+            )
+        values[key] = value
+    for key in CAPTURE_ENV_TEXT:
+        values[key] = _optional_text(environment, key, f"{where} 的 environment.{key}")
+    _optional_text(data, "model", f"{where} 的 model")
+    return Capture(
+        page_url=_optional_text(data, "url", f"{where} 的 url"),
+        page_title=_optional_text(data, "title", f"{where} 的 title"),
+        ids={key: _optional_text(data, key, f"{where} 的 {key}") for key, _ in CAPTURE_IDS},
+        environment=values,
+        operator=_optional_text(data, "operator", f"{where} 的 operator"),
     )
 
 
@@ -677,29 +770,36 @@ def run(args: argparse.Namespace) -> CommandResult:
         raise InputError(f"--attempt 应为不小于 1 的整数：{attempt}")
     if args.now is not None:
         parse_utc(args.now)
-    plan = plan_tasks(
-        args.project,
-        platform=args.platform,
-        channel=CHANNEL,
-        window=args.window,
-        repeats=attempt,
-        queries=[args.query],
-    )
-    task = plan.tasks[-1]
+    project.paths(args.project)
     source = Path(args.input)
     if not source.is_file():
         raise InputError(f"文件不存在：{source}")
     raw = read_bytes(source)
     name = source.name
     fmt = detect_format(name, raw)
+    captured: Capture | None = None
     if fmt == "json":
         try:
             text = raw.decode("utf-8-sig")
         except UnicodeDecodeError:
             raise InputError(f"{name} 不是 UTF-8 编码（JSON 文件须为 UTF-8）") from None
-        parsed = parse_json(text, name)
+        loaded = load_json(text, name)
+        captured = read_capture(loaded, name)
+        parsed = parse_json_data(loaded, name)
     else:
         parsed = parse_html(decode_html(raw, name))
+    # 通道决定任务的 trace_id，所以先读文件、再按通道生成任务
+    channel = BROWSER_CHANNEL if captured is not None else CHANNEL
+    file_format = CAPTURE_FORMAT if captured is not None else fmt
+    plan = plan_tasks(
+        args.project,
+        platform=args.platform,
+        channel=channel,
+        window=args.window,
+        repeats=attempt,
+        queries=[args.query],
+    )
+    task = plan.tasks[-1]
     question, answer, prior = last_pair(parsed.messages)
     digest = sha256_bytes(raw)
 
@@ -710,9 +810,9 @@ def run(args: argparse.Namespace) -> CommandResult:
     previous = by_trace.get(task.trace_id)
     base: dict[str, Any] = {
         "adapter": NAME,
-        "channel": CHANNEL,
+        "channel": channel,
         "input": name,
-        "format": fmt,
+        "format": file_format,
         "platform": plan.platform,
         "window_id": plan.window_id,
         "query_id": task.query_id,
@@ -744,7 +844,7 @@ def run(args: argparse.Namespace) -> CommandResult:
         (
             item
             for item in existing
-            if item.get("channel") == CHANNEL and _source_sha(item) == digest
+            if item.get("channel") == channel and _source_sha(item) == digest
         ),
         None,
     )
@@ -768,6 +868,16 @@ def run(args: argparse.Namespace) -> CommandResult:
             f"文件中的提问与封存题目 {task.query_id} 的原文不一致：已按文件中的实际提问原文记录 "
             "prompt_text，请核对 --query 是否选对"
         )
+    mismatched: list[str] = []
+    if captured is not None:
+        given = {"platform": plan.platform, "window_id": plan.window_id, "query_id": task.query_id}
+        for key, option in CAPTURE_IDS:
+            value = captured.ids[key]
+            if value is not None and value != given[key]:
+                mismatched.append(key)
+                warnings.append(
+                    f"文件中的 {key}（{value}）与命令行 {option}（{given[key]}）不一致：以命令行为准"
+                )
     started_at, time_problem = saved_time(parsed)
     time_source = "saved_at" if started_at is not None else "import_time"
     if time_problem:
@@ -777,6 +887,8 @@ def run(args: argparse.Namespace) -> CommandResult:
         time_note = "时间为导入时间，非采集时间：文件中没有可用的保存时间"
         if not time_problem:
             warnings.append("文件中没有保存时间：开始和结束时间记为导入时间（非采集时间）")
+    elif captured is not None:
+        time_note = CAPTURE_TIME_NOTE
     else:
         time_note = (
             f"开始和结束时间均取文件中的保存时间（{parsed.saved_field}），不是实际提问的时间"
@@ -785,6 +897,14 @@ def run(args: argparse.Namespace) -> CommandResult:
         warnings.append(f"文件中这组提问之前还有 {prior} 条对话消息，回答可能受前文影响")
 
     entry_form = args.entry_form or DEFAULT_ENTRY_FORM
+    if captured is not None:
+        file_entry = captured.environment["entry_form"]
+        if args.entry_form and args.entry_form != file_entry:
+            warnings.append(
+                f"文件中的 entry_form（{file_entry}）与命令行 --entry-form（{args.entry_form}）"
+                "不一致：以命令行为准"
+            )
+        entry_form = args.entry_form or file_entry
     model = answer.model or parsed.model
     if answer.citations is not None:
         raw_citations, skipped = answer.citations, answer.citations_skipped
@@ -801,23 +921,43 @@ def run(args: argparse.Namespace) -> CommandResult:
         status, reason, answer_text = "valid", None, answer.text
     citations = resolve_citations(raw_citations, answer.text)
 
-    features = f"分享数据导入：使用者另存的 {fmt.upper()} 文件，入口形态按 {entry_form} 记录"
-    reasons = dict(_NULL_REASONS)
-    if prior:
-        reasons["history_cleared"] += f"；文件中该提问之前还有 {prior} 条对话消息"
-    if model is None:
-        features += "；文件未提供模型版本"
-        reasons["model_version"] = "分享文件未提供模型或产品版本"
     operator = args.operator.strip() if args.operator and args.operator.strip() else None
-    if operator is None:
-        reasons["operator"] = "未用 --operator 指明采集人"
+    if captured is not None:
+        environment = {key: captured.environment[key] for key in ENVIRONMENT_FIELDS}
+        reasons = {
+            key: text for key, text in _CAPTURE_NULL_REASONS.items() if environment[key] is None
+        }
+        features = captured.environment["entry_features"] or "浏览器辅助采集：采集人未填写入口特征"
+        if model is None:
+            if captured.environment["entry_features"] is None:
+                features += "；文件未提供模型版本"
+            reasons["model_version"] = "浏览器辅助采集：采集人未填写模型或产品版本"
+        if operator and captured.operator and operator != captured.operator:
+            warnings.append(
+                f"文件中的 operator（{captured.operator}）与命令行 --operator（{operator}）"
+                "不一致：以命令行为准"
+            )
+        operator = operator or captured.operator
+        if operator is None:
+            reasons["operator"] = "浏览器辅助采集：采集人未填写，也未用 --operator 指明"
+    else:
+        environment = dict.fromkeys(ENVIRONMENT_FIELDS)
+        features = f"分享数据导入：使用者另存的 {fmt.upper()} 文件，入口形态按 {entry_form} 记录"
+        reasons = dict(_NULL_REASONS)
+        if prior:
+            reasons["history_cleared"] += f"；文件中该提问之前还有 {prior} 条对话消息"
+        if model is None:
+            features += "；文件未提供模型版本"
+            reasons["model_version"] = "分享文件未提供模型或产品版本"
+        if operator is None:
+            reasons["operator"] = "未用 --operator 指明采集人"
     if answer_text is None:
         reasons["answer_text"] = "分享文件中的回答为空"
     share_ext: dict[str, Any] = {
-        "format": fmt,
+        "format": file_format,
         "source_file": name,
         "source_sha256": digest,
-        "share_url": parsed.share_url,
+        "share_url": None if captured is not None else parsed.share_url,
         "time_source": time_source,
         "time_field": parsed.saved_field if time_source == "saved_at" else None,
         "time_note": time_note,
@@ -826,6 +966,13 @@ def run(args: argparse.Namespace) -> CommandResult:
     }
     if skipped:
         share_ext["citations_skipped"] = skipped
+    if captured is not None:
+        share_ext["capture"] = {
+            "page_url": captured.page_url,
+            "page_title": captured.page_title,
+            "file_ids": captured.ids,
+            "mismatched": mismatched,
+        }
 
     relpath, _ = _store_copy(root, task.observation_id, name, raw)
     observation: dict[str, Any] = {
@@ -840,14 +987,10 @@ def run(args: argparse.Namespace) -> CommandResult:
         "entry_form": entry_form,
         "model_version": model,
         "entry_features": features,
-        "channel": CHANNEL,
+        "channel": channel,
         "started_at": started_at,
         "ended_at": started_at,
-        "logged_in": None,
-        "history_cleared": None,
-        "web_search": None,
-        "region": None,
-        "device": None,
+        **environment,
         "answer_text": answer_text,
         "citations": citations,
         "snapshots": [snapshot_entry(root, relpath, sha256=digest)],
@@ -879,10 +1022,10 @@ def run(args: argparse.Namespace) -> CommandResult:
         after_hash=sha256_file(observations_path),
         details={
             "adapter": NAME,
-            "channel": CHANNEL,
+            "channel": channel,
             "source_file": name,
             "source_sha256": digest,
-            "format": fmt,
+            "format": file_format,
             "platform": plan.platform,
             "window_id": plan.window_id,
             "query_id": task.query_id,
@@ -894,6 +1037,8 @@ def run(args: argparse.Namespace) -> CommandResult:
         },
         synthetic=True if synthetic else None,
     )
+    if captured is not None:
+        base["page_url"] = captured.page_url
     data = {
         **base,
         "entry_form": entry_form,
@@ -904,7 +1049,7 @@ def run(args: argparse.Namespace) -> CommandResult:
         "prompt_text_differs": differs,
         "time_source": time_source,
         "citations": len(citations),
-        "share_url": parsed.share_url,
+        "share_url": share_ext["share_url"],
         "prior_messages": prior,
         "snapshot": relpath,
         "audit_event_id": event["event_id"],
@@ -912,8 +1057,10 @@ def run(args: argparse.Namespace) -> CommandResult:
     }
     state = "有效" if status == "valid" else f"无效（{reason}）"
     lines = [f"警告：{item}" for item in warnings[:1] if differs]
+    kind = "浏览器辅助采集文件" if captured is not None else "分享数据"
+    label = CAPTURE_FORMAT if captured is not None else fmt.upper()
     lines.append(
-        f"已导入分享数据 {name}（{fmt.upper()}）→ 观测 {task.observation_id}："
+        f"已导入{kind} {name}（{label}）→ 观测 {task.observation_id}："
         f"平台 {plan.platform}，窗口 {plan.window_id}，题目 {task.query_id} 第 {task.attempt} 次，"
         f"{state}，引用 {len(citations)} 条。"
     )
