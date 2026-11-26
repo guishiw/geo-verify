@@ -32,3 +32,7 @@
 - **不可篡改证据包（`evidence build | verify`）**：清单链、JSONL 逐行哈希索引、依赖锁随包保存、只追加约束校验与篡改/删除/重排逐行定位。
 - **抽样复核与预检报告（`recheck-plan`、`recheck-compare`、`report`）**：固定 seed 抽样复核清单与比对；18 条固定规则预检结论（`通过` / `有条件通过` / `不通过` / `数据不足`），输出 `report.json`、自包含可打印 `report.html`（合成数据带可见水印、利益关系披露栏与人工签字栏）及防公式注入 UTF-8 BOM `observations.csv`。
 - **完整文档**：`README.md`、`docs/quickstart.md`、`docs/methodology.md`、`docs/clause-map.md`、`docs/cli.md`、`docs/outputs.md`、`docs/collect.md`、`docs/recheck.md`、`docs/evidence.md`、`CONTRIBUTING.md`、`SECURITY.md`。
+
+#### 修复
+
+- `collect --adapter openai --live` 不再接受 `--now`：真实调用的观测与审计时间只取本机时钟，防止回填到任意时间窗口（R8）。

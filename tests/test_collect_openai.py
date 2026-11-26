@@ -783,7 +783,7 @@ LIVE = ("--live", "--base-url", "https://api.example.test/v1", "--api-key-env", 
 def live(root: Path, *extra: str) -> tuple[int, Any]:
     return run_cli_json(
         "collect", str(root), "--adapter", "openai", "--platform", "engine-a", "--window", "W1",
-        "--queries", "Q001", "--retry-wait", "0", "--now", NOW, *extra,
+        "--queries", "Q001", "--retry-wait", "0", *extra,
     )  # fmt: skip
 
 
@@ -832,6 +832,19 @@ def test_full_live_parameters_without_live_flag_never_reach_the_network(
     assert "--live" in data["message"]
     assert fake_live == []
     assert project.load_observations(root) == []
+
+
+def test_live_refuses_a_specified_time(root: Path, fake_live: list[str]) -> None:
+    """R8：真实调用的开始、结束与审计时间只能取本机时钟，--now 会让时间可被任意回填。"""
+    code, data = live(
+        root, "--live", "--base-url", "https://api.example.test/normal/v1",
+        "--api-key-env", KEY_ENV, "--model", "m", "--now", "2019-01-01T00:00:00Z",
+    )  # fmt: skip
+    assert code == 2, data
+    assert "--now" in data["message"]
+    assert fake_live == []
+    assert project.load_observations(root) == []
+    assert project.load_audit(root) == []
 
 
 def test_live_run_uses_the_real_transport(root: Path, fake_live: list[str]) -> None:

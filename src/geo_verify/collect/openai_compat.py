@@ -298,6 +298,11 @@ def resolve_settings(args: argparse.Namespace) -> tuple[Settings, Any, Secret | 
             raise InputError(
                 "--live 与 --asgi-app 不能同时使用：--live 访问真实地址，--asgi-app 只连接进程内应用"
             )
+        if args.now is not None:
+            raise InputError(
+                "--live 不能与 --now 同时使用：真实调用的开始、结束时间和审计时间只取本机时钟，"
+                "不得指定（--now 只用于连接进程内模拟服务的可复现运行）"
+            )
         require_options(args, "--live", "--base-url", "--api-key-env")
         if config is not None:
             require_verified(config)

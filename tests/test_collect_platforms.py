@@ -72,7 +72,7 @@ def write_config(tmp_path: Path, text: str) -> Path:
 def live(root: Path, *extra: str, base: str = BASE) -> tuple[int, Any]:
     return run_cli_json(
         "collect", str(root), "--adapter", "openai", "--platform", "engine-a", "--window", "W1",
-        "--queries", "Q001", "--now", NOW, "--live", "--base-url", base, "--api-key-env", KEY_ENV,
+        "--queries", "Q001", "--live", "--base-url", base, "--api-key-env", KEY_ENV,
         *extra,
     )  # fmt: skip
 
