@@ -36,6 +36,7 @@ ALL_RULES = [
     "R-EXCLUSION-UNREGISTERED",
     "R-EXCLUSION-SELECTIVE",
     "R-PREREG-CHANGED",
+    "R-PROMPTS-SEALED",
     "R-METRICS",
     "R-ACCEPTANCE-DEFINED",
     "R-SUFFICIENCY",
@@ -656,3 +657,29 @@ def test_exit_codes_follow_the_verdict(case: Case) -> None:
     assert case.report()[0] == 3
     case.write("evidence", evidence_doc("fail"))
     assert case.report()[0] == 1
+
+
+def test_tampered_sealed_prompt_set_fails_with_a_report(case: Case) -> None:
+    sealed = case.root / "prompts" / "sealed" / "v0001.json"
+    data = __import__("json").loads(sealed.read_text(encoding="utf-8"))
+    data["prompts"][0]["text"] = "封存后被改过的题目"
+    write_json(sealed, data)
+    report = _verdict(case, "fail")
+    item = rule(report, "R-PROMPTS-SEALED")
+    assert item["status"] == "fail"
+    assert "v0001.json" in item["basis"]
+    assert "R-PROMPTS-SEALED" in report["verdict"]["decided_by"]
+    assert report["project"]["prompt_set"] is None
+    # 被改动的文件仍列入输入及其哈希，便于核对
+    assert "prompts/sealed/v0001.json" in {entry["path"] for entry in report["inputs"]}
+
+
+def test_unsealed_project_does_not_run_the_sealing_check(tmp_path: Path) -> None:
+    from helpers_report import Case as Bare
+
+    root = tmp_path / "proj"
+    __import__("factory").make_project(root)
+    case = Bare(root, {}, {})
+    code, data = case.report("--formats", "json")
+    assert code == 3
+    assert rule(data, "R-PROMPTS-SEALED")["status"] == "not_run"

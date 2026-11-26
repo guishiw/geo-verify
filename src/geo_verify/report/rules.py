@@ -297,6 +297,20 @@ def _rule_prereg(inputs: Inputs) -> Rule:
     )
 
 
+def _rule_sealed(inputs: Inputs) -> Rule:
+    title = "封存题库未被改动"
+    if inputs.sealed_problem is not None:
+        basis = f"{inputs.sealed_problem}：封存后被改动的题库不得使用，不同版本禁止混算"
+        return Rule(
+            "R-PROMPTS-SEALED", title, INTEGRITY, "fail", basis, {"problem": inputs.sealed_problem}
+        )
+    if not inputs.sealed:
+        return Rule("R-PROMPTS-SEALED", title, INTEGRITY, "not_run", "题库尚未封存")
+    details = {"versions": len(inputs.sealed), "latest_hash": inputs.sealed[-1]["content_hash"]}
+    basis = f"共 {len(inputs.sealed)} 个封存版本，内容哈希与版本链完整"
+    return Rule("R-PROMPTS-SEALED", title, INTEGRITY, "pass", basis, details)
+
+
 def _rule_metrics(inputs: Inputs) -> Rule:
     title = "指标结果"
     metrics = inputs.get("metrics")
@@ -730,6 +744,7 @@ def evaluate(inputs: Inputs) -> tuple[list[Rule], Acceptance]:
         _rule_unregistered(inputs),
         _rule_selective(inputs),
         _rule_prereg(inputs),
+        _rule_sealed(inputs),
         _rule_metrics(inputs),
         _rule_defined(inputs, acceptance),
         _rule_sufficiency(inputs, acceptance),

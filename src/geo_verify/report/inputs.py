@@ -14,7 +14,7 @@ from typing import Any
 from geo_verify import project as project_module
 from geo_verify import spec
 from geo_verify.canon import sha256_file
-from geo_verify.errors import InputError
+from geo_verify.errors import CheckFailed, InputError
 from geo_verify.jsonl import read_json, read_jsonl
 
 RESULT_FILES: dict[str, tuple[str, str]] = {
@@ -40,6 +40,7 @@ class Inputs:
     excluded: dict[str, str]
     results: dict[str, dict[str, Any] | None]
     hashes: dict[str, str] = field(default_factory=dict)
+    sealed_problem: str | None = None
 
     def get(self, name: str) -> dict[str, Any] | None:
         return self.results.get(name)
@@ -237,10 +238,14 @@ def load_inputs(root: Path) -> Inputs:
     if project_paths.entities.exists():
         entities = {item["entity_id"]: item for item in project_module.load_entities(root)}
         hashes["entities.jsonl"] = sha256_file(project_paths.entities)
-    sealed = project_module.load_sealed_prompt_sets(root)
-    for item in sealed:
-        relative = f"prompts/sealed/v{item['version']:04d}.json"
-        hashes[relative] = sha256_file(root / relative)
+    sealed_problem: str | None = None
+    try:
+        sealed = project_module.load_sealed_prompt_sets(root)
+    except CheckFailed as exc:  # 封存题库被改动：照常出报告，由判定规则给出“不通过”
+        sealed, sealed_problem = [], exc.message
+    if project_paths.sealed_dir.is_dir():
+        for path in sorted(project_paths.sealed_dir.glob("v*.json")):
+            hashes[f"prompts/sealed/{path.name}"] = sha256_file(path)
     observations = read_jsonl(project_paths.observations, missing_ok=True)
     if project_paths.observations.exists():
         hashes["observations.jsonl"] = sha256_file(project_paths.observations)
@@ -262,4 +267,5 @@ def load_inputs(root: Path) -> Inputs:
         excluded=project_module.exclusions(events),
         results=results,
         hashes=hashes,
+        sealed_problem=sealed_problem,
     )
